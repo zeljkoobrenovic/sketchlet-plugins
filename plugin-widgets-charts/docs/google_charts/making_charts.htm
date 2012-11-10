@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html class="devsite wf-opensans-n4-active wf-active" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><script async="" src="making_charts_files/cbgapi.loaded_0"></script><script gapi_processed="true" src="making_charts_files/plusone.js" async="" type="text/javascript"></script>
+    <meta charset="utf-8">
+    <script src="making_charts_files/script_head.js"></script>
+    <link rel="stylesheet" type="text/css" href="making_charts_files/screen.css">
+    <link rel="shortcut icon" href="https://developers.google.com/_static/images/favicon.ico">
+    <link rel="apple-touch-icon" href="https://developers.google.com/_static/images/apple-touch-icon.png">
+    <link href="making_charts_files/css_002.css" rel="stylesheet" type="text/css">
+    
+    <script src="making_charts_files/jquery.js"></script>
+    <script id="jqueryui" src="making_charts_files/jquery-ui.js"></script>
+    <script src="making_charts_files/jsapi"></script>
+    <script>
+      google.load('visualization', '1', {packages: ['table']});
+    </script><script src="making_charts_files/a" type="text/javascript"></script><script src="making_charts_files/formatendefaulttable.js" type="text/javascript"></script><style>.a-b-c{position:relative;display:-moz-inline-box;display:inline-block}* html .a-b-c,*:first-child+html .a-b-c{display:inline}.a-d-e{margin:2px;border:0;padding:0;font-family:Arial,sans-serif;color:#000;background:#ddd url(//ssl.gstatic.com/editor/button-bg.png) repeat-x top left;text-decoration:none;list-style:none;vertical-align:middle;cursor:default;outline:none}.a-d-e-f-g,.a-d-e-h-g{border-style:solid;border-color:#aaa;vertical-align:top}.a-d-e-f-g{margin:0;border-width:1px 0;padding:0}.a-d-e-h-g{-moz-box-orient:vertical;margin:0 -1px;border-width:0 1px;padding:3px 4px;white-space:nowrap}* html .a-d-e-h-g{left:-1px}* html .a-d-e-i .a-d-e-f-g{left:-1px}* html .a-d-e-i .a-d-e-h-g{right:auto}*:first-child+html .a-d-e-h-g{left:-1px}*:first-child+html .a-d-e-i .a-d-e-h-g{left:1px}::root .a-d-e,::root .a-d-e-f-g{line-height:0}::root .a-d-e-h-g{line-height:normal}.a-d-e-j{background-image:none!important;opacity:.3;-moz-opacity:.3;filter:alpha(opacity=30)}.a-d-e-j .a-d-e-f-g,.a-d-e-j .a-d-e-h-g{color:#333!important;border-color:#999!important}* html .a-d-e-j,*:first-child+html .a-d-e-j{margin:2px 1px!important;padding:0 1px!important}.a-d-e-k .a-d-e-f-g,.a-d-e-k .a-d-e-h-g{border-color:#9cf #69e #69e #7af!important}.a-d-e-l,.a-d-e-m{background-color:#bbb;background-position:bottom left}.a-d-e-n .a-d-e-f-g,.a-d-e-n .a-d-e-h-g{border-color:orange}.a-d-e-o-p,.a-d-e-o-p .a-d-e-f-g,.a-d-e-o-p .a-d-e-h-g{margin-right:0}.a-d-e-o-q,.a-d-e-o-q .a-d-e-f-g{margin-left:0}.a-d-e-o-q .a-d-e-h-g{margin-left:0;border-left:1px solid #fff}.a-d-e-o-q.a-d-e-m .a-d-e-h-g{border-left:1px solid #ddd}* html .a-d-e-o-q .a-d-e-h-g,*:first-child+html .a-d-e-o-q .a-d-e-h-g{left:0}.a-r-e{position:relative;margin:2px;border:1px solid #000;padding:2px 6px;font:normal 13px "Trebuchet MS",Tahoma,Arial,sans-serif;color:#fff;background-color:#8c2425;cursor:pointer;outline:none}.a-r-e-j{border-color:#888;color:#888;background-color:#ccc;cursor:default}.a-r-e-k{border-color:#8c2425;color:#8c2425;background-color:#eaa4a5}.a-r-e-l,.a-r-e-s,.a-r-e-m{border-color:#5b4169;color:#5b4169;background-color:#d1a8ea}.a-r-e-n{border-color:#5b4169}.a-r-e-o-p{margin-right:0}.a-r-e-o-q{margin-left:0;border-left:none}.a-e{color:#036;border-color:#036;background-color:#69c}.a-e-j{border-color:#333;color:#333;background-color:#999}.a-e-k{color:#369;border-color:#369;background-color:#9cf}.a-e-l{color:#69c;border-color:#69c}</style><link type="text/css" rel="stylesheet" href="making_charts_files/table.css">
+    <script type="text/javascript" src="making_charts_files/api.js"></script>
+    <!--[if lt IE 9]>
+    <script src="/_static/js/html5shim/html5.js"></script>
+    <![endif]-->
+
+    
+    <script>
+      google.load('search', '1', {language : 'en'});
+    </script><script src="making_charts_files/a_002" type="text/javascript"></script><link href="making_charts_files/defaulten.css" type="text/css" rel="stylesheet"><script src="making_charts_files/defaulten.js" type="text/javascript"></script>
+    
+
+    
+  <script type="text/javascript">
+    var contentTimer = new window.jstiming.Timer();
+
+    var ___gcfg = ___gcfg || {};
+    ___gcfg.lang = 'en';
+  </script>
+  <script src="making_charts_files/jquery-ui.js"></script>
+  
+  <title>Getting Started With Charts - Image Charts (Deprecated) — Google Developers</title><link href="making_charts_files/css.css" rel="stylesheet">
+  
+  
+  
+    
+    
+    
+  
+
+
+    
+    
+
+  </head>
+  <body class="two-column docs">
+    
+    <div id="sandbar">
+
+
+
+
+<header id="gc-googlebar">
+
+  <a id="gc-logo" href="https://developers.google.com/">
+    <img src="making_charts_files/developers-logo.png" alt="Google">
+  </a>
+
+  <div class="gc-social">
+    
+    <span class="signed-in">
+      <div>
+        <a class="email" href="https://plus.google.com/me">zeljko@backbase.com</a>
+        <a href="https://www.google.com/accounts/Logout?continue=https://developers.google.com/chart/image/docs/making_charts&amp;service=ahsid">Sign out</a>
+      </div>
+      <img src="making_charts_files/silhouette36.png">
+    </span>
+    
+  </div>
+
+  <form class="gc-search" action="/search/results" method="GET">
+    <div style="width: 448px;" class="searchbox">
+      
+      
+        <span class="button button-blue mini">Image Charts (Deprecated)<pre>  X</pre></span>
+      
+      <input style="width: 263px;" name="q" class="q" id="q" placeholder="Search" autocomplete="off" type="text">
+    </div>
+    <button style="top: 0px; left: 467px;" class="button button-blue">
+      <img src="making_charts_files/search.png" alt="Search">
+    </button>
+    
+      <input name="p" id="search_project" value="/chart/image" type="hidden">
+    
+  </form>
+
+</header>
+
+
+
+</div>
+    
+
+    
+    
+
+    <div id="gc-wrapper" itemscope="" itemtype="http://schema.org/Article">
+      
+      <input id="gc-analytics" value="UA-24532603-1" type="hidden">
+      
+
+      
+
+      <div id="gc-topnav">
+        <div>
+          <ul>
+            
+            
+            <li class=""><a href="https://developers.google.com/">Home</a></li>
+            
+            <li class="active"><a href="https://developers.google.com/products/">Products</a></li>
+            
+            <li class=""><a href="https://developers.google.com/events/">Events</a></li>
+            
+            <li class=""><a href="https://developers.google.com/showcase/">Showcase</a></li>
+            
+            <li class=""><a href="https://developers.google.com/live/">Live</a></li>
+            
+            <li class=""><a href="https://developers.google.com/groups/">Groups</a></li>
+            
+            
+          </ul>
+        </div>
+      </div>
+      
+      
+
+      
+      
+      
+        <div id="gc-appbar">
+          
+          
+<h1>
+
+  <a href="https://developers.google.com/chart/image/">Image Charts (Deprecated)</a>
+  <div class="plusone-container">
+    <div id="___plusone_0" style="height: 20px; width: 90px; display: inline-block; text-indent: 0px; margin: 0px; padding: 0px; background: none repeat scroll 0% 0% transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline;"><iframe src="making_charts_files/fastbutton.htm" name="I0_1349773024125" id="I0_1349773024125" vspace="0" tabindex="0" style="position: absolute; top: -10000px; width: 90px; margin: 0px; border-style: none;" marginwidth="0" marginheight="0" hspace="0" allowtransparency="true" frameborder="0" scrolling="no" width="100%"></iframe></div>
+  </div>
+
+
+
+
+
+
+</h1>
+
+          
+        </div>
+      
+      
+
+      
+      <div id="gc-main">
+        
+      
+      
+      <div id="gc-sidebar">
+        
+
+  
+
+
+
+  <nav class="gc-toc"><ul><li class=""><a class="tlw-control tlw-collapsed">▸</a><span class="tlw-title tlw-control-title" data-title="Chart API">Chart API</span><ul style="display: none;"><li class=""><a href="https://developers.google.com/chart/image/docs/release_notes#whatsnew" data-title="What's New?"><span>What's New?</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/release_notes" data-title="Release Notes"><span>Release Notes</span></a></li></ul></li></ul><hr><ul><li class=""><a class="tlw-control tlw-expanded">▾</a><span class="tlw-title tlw-control-title" data-title="Using Charts">Using Charts</span><ul><li class="active"><a href="https://developers.google.com/chart/image/docs/making_charts" data-title="Getting Started"><span>Getting Started</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/data_formats" data-title="Data Formats"><span>Data Formats</span></a></li><li class="new"><a href="https://developers.google.com/chart/image/docs/chart_wizard" data-title="Chart Wizard"><span>Chart Wizard<sup>New!</sup></span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/chart_playground" data-title="Live Chart Playground"><span>Live Chart Playground</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/debugging" data-title="Troubleshooting Charts"><span>Troubleshooting Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/post_requests" data-title="POST Requests"><span>POST Requests</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/chart_params" data-title="List of Chart Parameters"><span>List of Chart Parameters</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/json_format" data-title="Creating a map For Your Chart"><span>Creating a map For Your Chart</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/user_submitted_gallery" data-title="User-Submitted Charts"><span>User-Submitted Charts</span></a></li></ul></li></ul><hr><ul><li class=""><a class="tlw-control tlw-collapsed">▸</a><a class="tlw-title" href="https://developers.google.com/chart/image/docs/gallery/chart_gall" data-title="Chart Gallery"><span>Chart Gallery</span></a><ul style="display: none;"><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/bar_charts" data-title="Bar Charts"><span>Bar Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/compound_charts#box_charts" data-title="Box Charts"><span>Box Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/compound_charts#candlestick_charts" data-title="Candlestick Charts"><span>Candlestick Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/compound_charts" data-title="Compound Charts"><span>Compound Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/dynamic_icons" data-title="Dynamic Icons"><span>Dynamic Icons</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/googleometer_chart" data-title="Google-O-Meter Charts"><span>Google-O-Meter Charts</span></a></li><li class="experimental"><a href="https://developers.google.com/chart/image/docs/gallery/graphviz" data-title="GraphViz Charts"><span>GraphViz Charts<sup>Experimental!</sup></span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/line_charts" data-title="Line Charts"><span>Line Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/new_map_charts" data-title="Map Charts"><span>Map Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/pie_charts" data-title="Pie Charts"><span>Pie Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/radar_charts" data-title="Radar Charts"><span>Radar Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/scatter_charts" data-title="Scatter Charts"><span>Scatter Charts</span></a></li><li class=""><a href="https://developers.google.com/chart/image/docs/gallery/venn_charts" data-title="Venn Charts"><span>Venn Charts</span></a></li></ul></li><li class=""><a class="tlw-control tlw-collapsed">▸</a><span class="tlw-title tlw-control-title" data-title="Related Chart Tools">Related Chart Tools</span><ul style="display: none;"><li class=""><a href="https://developers.google.com/chart" data-title="Google Chart Tools"><span>Google Chart Tools</span></a></li><li class="deprecated"><a href="https://developers.google.com/chart/infographics" data-title="Infographics (QR codes, etc)"><span>Infographics (QR codes, etc)<sup>Deprecated</sup></span></a></li></ul></li></ul></nav>
+
+
+
+      </div>
+      
+
+      <div id="gc-content">
+        
+        <div>
+          
+  
+  <h1 itemprop="name" class="page-title">Getting Started With Charts</h1>
+  
+  <div itemprop="articleBody">
+  
+
+
+
+
+
+
+
+
+
+
+<p>This page describes the basics of using the Chart API to make charts.</p>
+<div class="special">
+  <h2 class="noborder nomargin">Google Chart Usage Policy</h2>
+  <p>There's no limit to the number of calls per day you can make to the Google Chart
+    API. However, we reserve the right to block any use that we regard as abusive.</p>
+</div>
+<h2>Table of Contents</h2>
+<div class="toc">
+  <ol>
+    <li><a href="#gettingstarted">Getting Started</a></li>
+    <li><a href="#introduction">Overview</a></li>
+    <li><a href="#chart_elements">Elements of a Chart</a></li>
+    <li><a href="#making_a_chart">How to Make a Chart</a>
+      <ol>
+        <li><a href="#usingthewizard">Using the Chart Wizard</a></li>
+        <li><a href="#creatingbyhand">Creating a Chart Manually</a></li>
+      </ol>
+    </li>
+    <li><a href="#enhancements">Chart Optimizations</a></li>
+  </ol>
+</div>
+<h2><a name="gettingstarted" id="gettingstarted"></a>Getting Started</h2>
+<p>The quickest way to make a chart for your web page is to use our new <a href="https://developers.google.com/chart/image/docs/chart_wizard">chart
+    wizard</a>. Copy and paste the URL generated by the wizard into
+    your web page inside an <code>&lt;img&gt;</code> tag.</p>
+<p>For more advanced users, for chart types or features not supported by the wizard
+  (such as candlestick charts), or for a deeper understanding of how the API works,
+  read the rest of this page.</p>
+<a name="introduction" id="introduction"></a>
+<h2>Overview</h2>
+<div class="special" style="float:right; width:30em">
+  <p><strong>Viewing Charts in This Documentation</strong></p>
+  <p>All the chart images in this documentation are generated live, using the Chart
+    API. To view the URL of any image, do the following:</p>
+  <ul>
+    <li>If you are using Firefox, right-click and then select "View Image" or "Properties".</li>
+    <li>If you are using Internet Explorer, right-click and then select "Properties".</li>
+  </ul>
+  <p>To make a URL easier to read, this document often shows it on multiple lines.
+    When you are using the Google Chart API, you must supply a URL on a single line.</p>
+</div>
+<p>The Google Chart API returns a chart image in response to
+  a URL GET or POST request. The API can generate many kinds of charts, from pie
+  or line charts to QR codes and formulas. All the information about the
+  chart that you want, such as chart data, size, colors, and labels, are part of
+  the URL. (For POST requests, it's a little different, but don't worry about
+  that now).</p>
+<p>To make the simplest chart possible, all your URL needs to specify is the chart
+  type, data, and size. You can type this URL directly in your
+  browser, or point to it with an <code>&lt;img&gt;</code> tag
+  in your web page. For example, follow this link for a pie chart: </p>
+<p><a href="https://chart.googleapis.com/chart?chs=250x100&amp;chd=t:60,40&amp;cht=p3&amp;chl=Hello%7CWorld">https://chart.googleapis.com/chart?chs=250x100&amp;chd=t:60,40&amp;cht=p3&amp;chl=Hello|World</a></p>
+<p>&nbsp;</p>
+<p>The preceding link is an example of a basic Chart API URL. All Chart URLs have
+  the following format:</p>
+<pre>https://chart.googleapis.com/chart?cht=&lt;<em>chart_type</em>&gt;&amp;chd=&lt;<em>chart_data</em>&gt;&amp;chs=<em>&lt;chart_size&gt;&amp;...additional_parameters</em>...</pre>
+<p>All URLs start with <code>https://chart.googleapis.com/chart?</code> followed
+  by the parameters that specify chart data and appearance. Parameters are <em>name</em>=<em>value</em> pairs,
+  separated by an ampersand character (<code>&amp;</code>), and parameters can
+  be in any order, after the <code>?</code>. All charts require at
+  minimum the following parameters: <code>cht</code> (chart
+  type), <code>chd</code> (data), and <code>chs</code> (chart size). However, there
+  are many more parameters for additional options, and you can specify as many additional
+  parameters as the chart supports.</p>
+<p>Let's examine the URL above in more detail:</p>
+<table>
+
+  <tbody><tr valign="top">
+    <th>URL</th>
+    <th>Components</th>
+  </tr>
+  <tr valign="top">
+    <td width="26%"><p><img src="making_charts_files/chart.png" alt="Yellow pie chart" border="1"></p>
+        <p><code>https://chart.googleapis.com/chart?<br>
+            &nbsp;&nbsp;cht=p3&amp;<br>
+            &nbsp;&nbsp;chs=250x100&amp;<br>
+  &nbsp;&nbsp;chd=t:60,40&amp;<br>
+  &nbsp;&nbsp;chl=Hello|World</code></p></td>
+    <td valign="top" width="74%"><br>
+      <dl>
+        <dt><code>https://chart.googleapis.com/chart? </code></dt>
+        <dd>This is the base URL for all chart requests. (However, see <a href="#multichart">Improving
+        Performance on Pages with Many Charts</a>
+        below for an optional variation for pages with multiple
+        charts.)</dd>
+        <dt><code>cht=p3</code> </dt>
+        <dd>The chart type: here, a 3D pie chart.</dd>
+        <dt><code>chs=250x100</code> </dt>
+        <dd>The chart size (<em>width</em> x <em>height</em>), in pixels. See the maximum values
+          <a href="https://developers.google.com/chart/image/docs/chart_params#gcharts_chs">here</a>.</dd>
+        <dt><code>chd=t:60,40</code> </dt>
+        <dd>The chart data. This data is in simple text format, but there are <a href="https://developers.google.com/chart/image/docs/data_formats">other
+          formats</a>.</dd>
+        <dt><code>chl=Hello|World</code> </dt>
+        <dd>The <a href="https://developers.google.com/chart/image/docs/gallery/pie_charts#pie_chart_label">slice labels</a>.</dd>
+        <dt><code>&amp;</code></dt>
+        <dd>Parameters are separated by an ampersand. <strong>Note:</strong> When
+              embedding an URL in HTML, for example as the <em>src</em> attribute
+              of an &lt;img&gt; tag,
+              you should replace the <code>&amp;</code> between parameters with the
+              characters <code>&amp;amp;</code> This includes when you generate page
+               HTML with PHP or some other language.
+              However, when typing a URL in the browser, or when <em>calling</em> a
+              URL in code, for example when fetching a URL in PHP or Perl, you should
+              use the
+            <code>&amp;</code> mark.</dd>
+    </dl></td>
+  </tr>
+
+</tbody></table>
+<p>Copy and paste this URL in your browser and try making a few changes: add additional
+  values to the data (don't forget to add a comma before each new data value). Add
+  new labels (put a <code>|</code> mark before each new value). Make the chart bigger.</p>
+<p class="backtotop"><a href="#top">Back to top</a></p>
+<h2><a name="making_a_chart" id="making_a_chart"></a>How To Make a Chart</h2>
+<p>You can make a chart using the chart wizard, or manually by writing the URL by
+  hand. You might want to start by using the wizard, and then tuning the results
+  manually for features not supported by the wizard.</p>
+<h3><a name="usingthewizard" id="usingthewizard"></a>Using the Chart Wizard</h3>
+<p>The chart wizard is located <a href="https://developers.google.com/chart/image/docs/chart_wizard">here</a>.
+It might still be useful to read the following topics even if you use the wizard:</p>
+<ul>
+  <li><a href="https://developers.google.com/chart/image/docs/data_formats">Data Formats</a>, for an understanding of why to
+    use one data format over another</li>
+  <li>The details page for your specific chart type, if you want to learn more about
+    what you can do with that chart type</li>
+  <li><a href="https://developers.google.com/chart/image/docs/post_requests">POST requests</a>, if you want to make a POST version
+    of your chart, instead of a GET version</li>
+  <li><a href="https://developers.google.com/chart/image/docs/json_format">Creating a <code>&lt;map&gt;</code> of your chart</a>,
+    if you want to add interactivity to your chart</li>
+</ul>
+<h3><a name="creatingbyhand" id="creatingbyhand"></a>Creating a Chart Manually</h3>
+
+<p>Here is a summary of how to make a chart manually:</p>
+<ol>
+  <li><strong>Decide on a chart type.</strong> See the gallery for a list of charts;
+    chart type is specified by the <a href="https://developers.google.com/chart/image/docs/chart_params#gcharts_cht"><code>cht</code></a> parameter. Sketch out all the components
+    that you want your chart to have (axes, labels, backgrounds, and so on), and
+    if necessary, figure out pixel dimensions for the various components (total chart
+    size, legend size, and so on). You should read the documentation carefully for
+    your chart type first, or you might have a frustrating experience.</li>
+  <li><strong><a href="https://developers.google.com/chart/image/docs/data_formats">Create and format your chart data</a>.</strong> Data
+        is specified using the <code>chd</code> parameter. You'll need to decide
+        which format to use for your data:
+<ul>
+          <li><strong>Choose a data format.</strong> You can use simple text
+            format for your chart data, which is easy to read, but takes more space to
+            send, or use one of the encoding types, which is smaller to send, but restricts
+            the range of values you can send.</li>
+          <li><strong>Decide whether your data must be scaled to fit your chart.</strong> Different
+            formats support different ranges of values. You might want to scale your
+            data so that it spans the full range of values allowed by your format,
+            to make differences more obvious. You can do this either by scaling your
+            data to fit within the data format that you use, or you can use <a href="https://developers.google.com/chart/image/docs/data_formats#data_scaling">text
+              formatting with custom scaling</a>.</li>
+          <li><strong>Encode your data, if necessary.</strong> If you've chosen an
+            encoded format, we offer some JavaScript to help with other encoding
+            types. </li>
+        </ul>
+  </li>
+  <li><strong>Specify the chart size.</strong> Chart size is specified using the <a href="https://developers.google.com/chart/image/docs/chart_params#gcharts_chs"><code>chs</code></a> parameter. See
+    the documentation for the format, and maximum values.</li>
+  <li><strong>Add additional parameters.</strong> Each chart's documentation lists
+    the available optional parameters. Typical options include labels, titles, and
+    colors. Note that all label or title text must be UTF-8 encoded. Note that many
+    parameters allow you to enter multiple values. For example, the <a href="https://developers.google.com/chart/image/docs/chart_params#gcharts_shape_markers"><code>chm</code></a> parameter
+    lets you put a shape on a single  data point on a chart. You can put shapes on
+    multiple data points using the <code>chm</code> parameter, but to do this, you <em>do
+      not</em> specify
+    the <code>chm</code> parameter multiple times in your URL (for example, <span style="color:red">WRONG</span>: <code>chm=<em>square</em>&amp;<span style="color:red">chm=<em>circle</em>&amp;chm=<em>triangle</em></span></code>).
+    Instead, parameters that take multiple values use a <em>delimiter</em>, such
+    as a comma or vertical bar, between multiple values in the same parameter.
+    For <code>chm</code>,
+    it is a bar, so you'd have something like this: <font color="#009933">RIGHT</font><font color="#00CC00">:</font> <code>chm=<em>square</em>|<em>circle</em>|<em>triangle</em></code>.
+    See the details of each parameter to learn how to specify multiple parameters.</li>
+  <li><strong>Build your URL string.</strong> The URL starts with <code>https://chart.googleapis.com/chart?</code> and
+    is followed by all your required (<code>cht</code>, <code>chd</code>, <code>chs</code>)
+    and optional parameters. <strong>Note:</strong> If you are using your URL
+    in an <code>&lt;img&gt;</code> tag, you'll
+    have to change all your <code>&amp;</code> characters to <code>&amp;amp;</code> in
+    your link. <strong>Example:</strong> <code>&lt;img src="https://chart.googleapis.com/chart?chs=250x100&amp;amp;chd=t:60,40&amp;amp;cht=p3&amp;amp;chl=Hello|World" /&gt;</code>.</li>
+  <li><strong>Use GET or POST to get your image.</strong> GET, is either when you
+    type the URL directly into your browser, or use it in an <code>&lt;img&gt;</code> tag.
+    However, URLs are limited to 2K in length, so if you have more data than that,
+    or have a taste for blood, you should consider using POST instead, as described <a href="https://developers.google.com/chart/image/docs/post_requests">here</a>.</li>
+  <li><strong>Create clickable regions.</strong> You can optionally create an image map for the chart
+    that will let you add hyperlinks or click elements to specific chart elements.
+    See <a href="https://developers.google.com/chart/image/docs/json_format">Creating a Chart Image Map</a> for details.</li>
+</ol>
+<p class="backtotop"><a href="#top">Back to top</a></p>
+<h2><a name="chart_elements" id="chart_elements"></a>Glossary of Chart Terms</h2>
+<p>Here are a few important terms that we use in this documentation:</p>
+<dl>
+  <dt><strong>Series</strong></dt>
+  <dd>A  related set of data in a chart.
+    What constitutes a series depends on the chart type: in a line chart, a series
+    is a single line; in a pie chart, each entry is a slice, and
+    all slices together are a series. In a bar chart, a series is all the bars from
+    the same set of data; different series are either grouped side by side or stacked
+    atop each other, depending on the bar chart type. The following chart demonstrates
+    a grouped bar chart with two series, one in dark blue, one in light blue:<br>
+    <img src="making_charts_files/chart_002.png" alt="Bar chart showing two series: Cats and Dogs." align="texttop" height="75" width="175"></dd>
+  <dt><strong>Axis labels</strong></dt>
+  <dd>Numeric or text values along each
+    axis. In the previous chart, it would be the labels "Jan," "Feb," "Mar,"
+    "0," "50," "100."
+    <div class="sidebox">
+      <h3>Chart Components</h3>
+      <p>Here are some of the components of a chart:</p>
+      <img src="making_charts_files/chart_elements.gif" alt="Various regions of a chart."> </div>
+  </dd>
+  <dt><strong>Chart area</strong></dt>
+  <dd>The area showing the series art. See "Chart Components" sidebar
+    for more details.  </dd>
+  <dt><strong>Legend</strong></dt>
+  <dd>A small area on the chart describing the series. In the chart above,
+    it is the section that lists "Cats" and "Dogs".</dd>
+  <dt><strong>Parameter</strong></dt>
+  <dd>A <em>key</em>=<em>value</em> pair used in the
+    URL. For example: <code>chxt=x</code>, where <code>chxt</code> is the parameter
+    name and <code>x</code> is the parameter value.</dd>
+  <dt><strong>GET</strong> and <strong>POST</strong></dt>
+  <dd>Two methods of sending your
+    Chart URL. GET is typically done either by typing a URL in the browser, or by
+    making it the source of an <code>&lt;img&gt;</code> tag. POST requests are more
+    complex to make, but can include much more data. The main reason to use
+    POST instead of GET is that a POST request can take much more data than a GET
+    request (16K characters vs 2K characters). POST is covered  <a href="https://developers.google.com/chart/image/docs/post_requests">here</a>.</dd>
+  <dt><strong>Pipe character</strong></dt>
+  <dd>The <code>|</code> character, often used
+    as a parameter value <em>delimiter</em>—that
+    is, a character to break up multiple values. Commas and ampersands
+    (&amp;) are also used as delimiters in the Chart URL.</dd>
+  <dt><strong>Compound charts</strong></dt>
+  <dd>A chart that is a combination of two different chart types:
+    for example, a bar chart with a line, or a line chart with candlestick markers.
+    See <a href="https://developers.google.com/chart/image/docs/gallery/compound_charts">Compound Charts</a>.</dd>
+</dl>
+<p class="backtotop"><a href="#top">Back to top</a></p>
+
+<h2><a name="enhancements" id="enhancements"></a>Optimizations</h2>
+<p>Now that you've learned the basics of making a chart, here are a few optimizations
+  that you can use.</p>
+<h3><a name="multichart" id="multichart"></a>Improving Performance on Pages with
+  Many Charts</h3>
+<p>If you have just a few charts on your page, the standard base URL <code>https://chart.googleapis.com/chart</code> should
+    be fine. However, if you have many charts, you can add a number 0-9 and a dot
+    just before <code>chart.apis.google.com</code>. If you specify a different number
+    for each chart on your page, the browser will try to load more images simultaneously,
+    rather than waiting to load them in sequence. However, you should only need this
+  if you're loading perhaps five or more charts on a page. For example: </p>
+<ul class="nolist">
+  <li><code>http://0.chart.apis.google.com/chart?cht=...</code></li>
+  <li><code>http://1.chart.apis.google.com/chart?cht=...</code></li>
+  <li><code>http://2.chart.apis.google.com/chart?cht=...</code></li>
+  <li>...</li>
+</ul>
+<p>Note that to use this technique you'll have to use a different host name in
+  the URL (<code>chart.apis.google.com</code> rather than the usual <code>
+  chart.googleapis.com</code>), and use <code>http</code> instead of <code>
+  https</code>.</p>
+<h3>Using POST</h3>
+<p>URLs are limited to 2K in length, so if your chart has more data than that, you'll
+  have to use POST instead of GET, as
+  described <a href="https://developers.google.com/chart/image/docs/post_requests">here</a>. GET is when you
+  type your chart URL into your browser URL bar, or use it as the source of an <code>&lt;img&gt;</code>
+  element in a web page. POST requires additional programming in another language,
+  such as PHP or PERL.</p>
+<h3>Making Charts in JavaScript</h3>
+<p>You can use the <a href="https://developers.google.com/chart/">Google Visualization API</a> to
+  create image charts for you. The Google Visualization API is a JavaScript-based
+  API that gives you tools to to create, filter, and manipulate data, or to query
+  Google Spreadsheets or other sites for data. You can use the Visualization
+  API to create your data, then have it call the Image Charts API to render the chart
+  on the page. For more information, see the <a href="https://developers.google.com/chart/interactive/docs/gallery/genericimagechart">Generic
+  Image Chart documentation</a>, or look in the <a href="https://developers.google.com/chart/interactive/docs/gallery">Visualization gallery</a> for
+  any Google charts marked (Image).</p>
+
+
+
+
+  
+  </div>
+
+        </div>
+        
+<div id="gc-content-footer">
+
+
+
+<div itemprop="datePublished" content="2012-07-09T12:29:20.416495" id="gc-content-last-updated">Last updated July 9, 2012.</div>
+
+</div>
+
+
+
+
+      </div>
+
+      </div>
+      
+
+      
+      
+      <footer id="gc-footer">
+        <div id="gc-copyright">
+          <a href="https://developers.google.com/">
+            <img id="developers-logo-footer" src="making_charts_files/developers-logo-footer.png" alt="Google Developers logo" style="vertical-align: center; float: left">
+          </a>
+          <ul>
+            <li><a href="http://www.google.com/">Google</a></li>
+            <li><a href="https://developers.google.com/readme/terms">Terms of Service</a></li>
+            <li><a href="http://www.google.com/intl/en/privacy/">Privacy Policy</a></li>
+            <li><a href="https://developers.google.com/jobs">Jobs</a></li>
+            <li><a class="google-feedback" data-p="81425" data-b="Documentation" data-v="devsite-20121008-rc02.362316981070017026" href="">Report a bug</a></li>
+          </ul>
+        </div>
+        
+        <div id="gc-language">
+          <ul>
+            <li>
+              <form id="setlang" action="/i18n/setlang/" method="post">
+                <div style="display:none"><input name="csrfmiddlewaretoken" value="f573a629b3cd68c6cc51b826dfbb16dc" type="hidden"></div>
+                <select style="display: none;" id="footer_language" name="language">
+                  
+                  
+                  <option value="ar">
+                    العربيّة
+                  </option>
+                  
+                  <option value="bg">
+                    български
+                  </option>
+                  
+                  <option value="ca">
+                    català
+                  </option>
+                  
+                  <option value="zh-cn">
+                    简体中文
+                  </option>
+                  
+                  <option value="zh-tw">
+                    繁體中文
+                  </option>
+                  
+                  <option value="hr">
+                    Hrvatski
+                  </option>
+                  
+                  <option value="cs">
+                    česky
+                  </option>
+                  
+                  <option value="da">
+                    Dansk
+                  </option>
+                  
+                  <option value="nl">
+                    Nederlands
+                  </option>
+                  
+                  <option value="en" selected="selected">
+                    English
+                  </option>
+                  
+                  <option value="fa">
+                    فارسی
+                  </option>
+                  
+                  <option value="fi">
+                    suomi
+                  </option>
+                  
+                  <option value="fr">
+                    Français
+                  </option>
+                  
+                  <option value="de">
+                    Deutsch
+                  </option>
+                  
+                  <option value="el">
+                    Ελληνικά
+                  </option>
+                  
+                  <option value="he">
+                    עברית
+                  </option>
+                  
+                  <option value="hi">
+                    Hindi
+                  </option>
+                  
+                  <option value="hu">
+                    Magyar
+                  </option>
+                  
+                  <option value="id">
+                    Bahasa Indonesia
+                  </option>
+                  
+                  <option value="it">
+                    italiano
+                  </option>
+                  
+                  <option value="ja">
+                    日本語
+                  </option>
+                  
+                  <option value="ko">
+                    한국어
+                  </option>
+                  
+                  <option value="lv">
+                    latviešu
+                  </option>
+                  
+                  <option value="lt">
+                    Lithuanian
+                  </option>
+                  
+                  <option value="nb">
+                    Norsk (bokmål)
+                  </option>
+                  
+                  <option value="nn">
+                    Norsk (nynorsk)
+                  </option>
+                  
+                  <option value="pl">
+                    polski
+                  </option>
+                  
+                  <option value="pt-br">
+                    Português Brasileiro
+                  </option>
+                  
+                  <option value="pt">
+                    Português
+                  </option>
+                  
+                  <option value="ro">
+                    Română
+                  </option>
+                  
+                  <option value="ru">
+                    Русский
+                  </option>
+                  
+                  <option value="sr">
+                    српски
+                  </option>
+                  
+                  <option value="sk">
+                    slovenský
+                  </option>
+                  
+                  <option value="sl">
+                    Slovenščina
+                  </option>
+                  
+                  <option value="es">
+                    español
+                  </option>
+                  
+                  <option value="sv">
+                    Svenska
+                  </option>
+                  
+                  <option value="th">
+                    Thai
+                  </option>
+                  
+                  <option value="tr">
+                    Türkçe
+                  </option>
+                  
+                  <option value="uk">
+                    Українська
+                  </option>
+                  
+                  <option value="vi">
+                    Vietnamese
+                  </option>
+                  
+                </select><span class="kd-button kd-menubutton kd-select"><div style="display: inline-block;"><div style="float: left;" class="label">
+                    English
+                  </div><div class="kd-disclosureindicator"></div></div></span>
+              </form>
+            </li>
+          </ul>
+        </div>
+        
+      </footer>
+      
+      
+    </div>
+    <div id="needAuth" class="msgDialogContent">
+      
+      <h1>Authentication required</h1>
+      
+      <div>
+        You need to be signed in with <a href="http://www.google.com/+">Google+</a> to do that.
+      </div>
+      <button>Sign in</button>
+      <button>Cancel</button>
+    </div>
+    <div id="signingIn" class="msgDialogContent">
+      
+      <h1>Signing you in...</h1>
+      <div>
+        
+        Google Developers needs your permission to do that.
+      </div>
+      
+      <button>Try again</button>
+      
+      <button>Cancel</button>
+    </div>
+    <script src="making_charts_files/script_foot.js"></script>
+    <script>
+      (function($) {
+        devsite.devsite.Init($, null, '');
+      })(jQuery);
+
+      
+      devsite.localInit = function() {
+        
+      };
+      
+    </script>
+    <!-- Google Code for PXL - Developers - Codesite - HP - 90d Remarketing List -->
+    <script type="text/javascript">
+    $('#setlang select').each(function() {
+      if ($.browser.msie) {
+        $(this).change(function() {
+          $('#setlang').submit();
+        });
+      } else {
+        $(this).kdSelect({'change': function() {
+          $('#setlang').submit();
+        }});
+      }
+    });
+    </script><ul class="kd-menulist" style="position: absolute; left: 1681px; top: 4396.23px; display: none;"><li style="" class="kd-menulistitem">
+                    العربيّة
+                  </li><li class="kd-menulistitem">
+                    български
+                  </li><li class="kd-menulistitem">
+                    català
+                  </li><li class="kd-menulistitem">
+                    简体中文
+                  </li><li class="kd-menulistitem">
+                    繁體中文
+                  </li><li class="kd-menulistitem">
+                    Hrvatski
+                  </li><li class="kd-menulistitem">
+                    česky
+                  </li><li class="kd-menulistitem">
+                    Dansk
+                  </li><li class="kd-menulistitem">
+                    Nederlands
+                  </li><li class="kd-menulistitem selected">
+                    English
+                  </li><li class="kd-menulistitem">
+                    فارسی
+                  </li><li class="kd-menulistitem">
+                    suomi
+                  </li><li class="kd-menulistitem">
+                    Français
+                  </li><li class="kd-menulistitem">
+                    Deutsch
+                  </li><li class="kd-menulistitem">
+                    Ελληνικά
+                  </li><li class="kd-menulistitem">
+                    עברית
+                  </li><li class="kd-menulistitem">
+                    Hindi
+                  </li><li class="kd-menulistitem">
+                    Magyar
+                  </li><li class="kd-menulistitem">
+                    Bahasa Indonesia
+                  </li><li class="kd-menulistitem">
+                    italiano
+                  </li><li class="kd-menulistitem">
+                    日本語
+                  </li><li class="kd-menulistitem">
+                    한국어
+                  </li><li class="kd-menulistitem">
+                    latviešu
+                  </li><li class="kd-menulistitem">
+                    Lithuanian
+                  </li><li class="kd-menulistitem">
+                    Norsk (bokmål)
+                  </li><li class="kd-menulistitem">
+                    Norsk (nynorsk)
+                  </li><li class="kd-menulistitem">
+                    polski
+                  </li><li class="kd-menulistitem">
+                    Português Brasileiro
+                  </li><li class="kd-menulistitem">
+                    Português
+                  </li><li class="kd-menulistitem">
+                    Română
+                  </li><li class="kd-menulistitem">
+                    Русский
+                  </li><li class="kd-menulistitem">
+                    српски
+                  </li><li class="kd-menulistitem">
+                    slovenský
+                  </li><li class="kd-menulistitem">
+                    Slovenščina
+                  </li><li class="kd-menulistitem">
+                    español
+                  </li><li class="kd-menulistitem">
+                    Svenska
+                  </li><li class="kd-menulistitem">
+                    Thai
+                  </li><li class="kd-menulistitem">
+                    Türkçe
+                  </li><li class="kd-menulistitem">
+                    Українська
+                  </li><li class="kd-menulistitem">
+                    Vietnamese
+                  </li></ul>
+    <script type="text/javascript">
+      /* <![CDATA[ */
+      var google_conversion_id = 992540712;
+      var google_conversion_language = "en";
+      var google_conversion_format = "3";
+      var google_conversion_color = "ffffff";
+      var google_conversion_label = "qio2CKCPwQMQqPCj2QM";
+      var google_conversion_value = 0;
+      /* ]]> */
+    </script>
+    <script type="text/javascript" src="making_charts_files/conversion.js">
+    </script><img src="making_charts_files/a.gif" border="0" height="1" width="1">
+    <noscript>
+      <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/992540712/?label=qio2CKCPwQMQqPCj2QM&amp;guid=ON&amp;script=0"/>
+      </div>
+    </noscript>
+    
+
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(e) {
+    // Render any carousels on the page
+    $('.carousel').carousel();
+    // Render any feed widgets on the page
+    
+    $('.feed').rss();
+    $('.feed-plain').rss();
+    // Render any OSS widgets on the page.
+    $('.oss').oss();
+    });
+</script>
+
+<script type="text/javascript" defer="defer">
+
+
+$(document).ready(function() {
+    contentTimer.name = 'content';
+    contentTimer.tick('ol');
+    window.jstiming.report(contentTimer);
+
+    // Boilerplate javascript to enable the plusone button
+    var po = document.createElement('script'); po.type = 'text/javascript';
+    po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js?onload=devsite_plusoneLoaded';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(po, s);
+});
+</script>
+
+
+
+
+  
+
+</body></html>

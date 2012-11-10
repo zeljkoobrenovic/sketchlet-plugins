@@ -1,0 +1,224 @@
+% Copyright 2009 Mykhaylo Sorochan
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+%
+%    Redistributions of source code must retain the above copyright notice,
+%    this list of conditions and the following disclaimer.
+%    Redistributions in binary form must reproduce the above copyright notice,
+%    this list of conditions and the following disclaimer in the documentation
+%    and/or other materials provided with the distribution.
+%
+%    THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+%    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+%    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+%    AUTHORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+%    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+%    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+%    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+%    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+%    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+%    POSSIBILITY OF SUCH DAMAGE.
+ 
+#pragma -esc \ -w 1000
+ 
+compounds
+        '.PS '.PE '*-> '*=> '~-> '~=> '-> '=> '<-- '<== '<- '<= '^+ '^- '--
+end compounds
+ 
+define program
+        [pic_program]
+%        [sequence_diagram]
+end define
+ 
+define sequence_diagram
+        [repeat param_assignment]
+        [repeat obj_decl]
+        [repeat seq_d_stmt]
+end define
+ 
+define obj_decl
+        [object_decl] [opt obj_constraint] [attr ';] [NL]
+    |   [actor_decl] [opt obj_constraint] [attr ';] [NL]
+    |   [placeholder_decl] [opt obj_constraint] [attr ';] [NL]
+    |   [dummy_decl] [attr ';] [NL]
+    |   [comment_decl] [attr ';] [NL]
+end define
+ 
+define object_decl
+        [id] ', [stringlit]
+end define
+ 
+define actor_decl
+        [id] ': [actor_type] ', [stringlit]
+end define
+ 
+define actor_type
+        'a | 'A
+end define
+ 
+define placeholder_decl
+        [id] ': [placeholder_type] ', [stringlit]
+end define
+ 
+define placeholder_type
+        'p | 'P
+end define
+ 
+define dummy_decl
+        [id] ': [dummy_type]
+end define
+ 
+define dummy_type
+        'd | 'D
+end define
+ 
+define comment_decl
+        [id] ': [comment_type] [opt comment_geometry] ', [repeat stringlit+]
+end define
+ 
+define comment_type
+        'c | 'C
+end define
+ 
+define comment_geometry
+        ', [repeat comment_geometry_position] ', [repeat comment_geometry_size]
+end define
+ 
+define comment_geometry_position
+        [SPON] [position_id] [opt number] [SPOFF]
+end define
+ 
+define position_id
+        'up | 'down | 'left | 'right
+end define
+ 
+define comment_geometry_size
+        [SPON] [geometry_id] [number] [SPOFF]
+end define
+ 
+define geometry_id
+        'wid | 'ht
+end define
+ 
+define obj_constraint
+        '^ [stringlit]
+end define
+ 
+define seq_d_stmt
+        [object_message] [attr ';] [NL]
+    |   [destroy_command] [attr ';] [NL]
+    |   [step_command] [attr ';] [NL]
+    |   [constraint_command] [attr ';] [NL]
+    |   [comment_command] [attr ';] [NL]
+    |   [message_block_open] [attr ';] [NL]
+    |   [message_block_close] [attr ';] [NL]
+    |   [frame] [attr ';] [NL]
+end define
+ 
+define object_message
+        [forward_message]
+    |   [backward_message]
+    |   [create_message]
+    |   [destroy_message]
+    |   [return_message]
+end define
+ 
+define message_label
+        ', [stringlit]
+end define
+ 
+define forward_message
+        [id] [forward_message_op] [id] [opt message_label]
+end define
+ 
+define forward_message_op
+        '-> | '=>
+end define
+ 
+define backward_message
+        [id] [backward_message_op] [id] [opt message_label]
+end define
+ 
+define backward_message_op
+        '<- | '<=
+end define
+ 
+define create_message
+        [id] [create_message_op] [id]
+end define
+ 
+define create_message_op
+        '*-> | '*=>
+end define
+ 
+define destroy_message
+        [id] [destroy_message_op] [id]
+end define
+ 
+define destroy_message_op
+        '~=> | '~->
+end define
+ 
+define return_message
+        [id] [return_message_op] [id] [opt message_label]
+end define
+ 
+define return_message_op
+        '<-- | '<==
+end define
+ 
+define destroy_command
+        '~ [id]
+end define
+ 
+define step_command
+        '|
+end define
+ 
+define constraint_command
+        [id] [constraint_command_op] [stringlit]
+end define
+ 
+define constraint_command_op
+        '^+ | '^-
+end define
+ 
+define comment_command
+        [id] '-- [id]
+end define
+ 
+define message_block_open
+        [id] '[ [IN] [NL]
+end define
+ 
+define message_block_close
+        [EX] [NL] '] [id]
+end define
+ 
+define frame
+        [id] ', [id] ', [stringlit] '{ [IN] [NL] [repeat seq_d_stmt] [EX] [NL] '}
+end define
+ 
+ 
+ 
+%%% pic addons
+define pic_program
+        '.PS [NL]
+        'copy '"sequence.pic"; [NL]
+        [repeat param_assignment]
+        [repeat pic_funcall]
+        '.PE [NL]
+end define
+ 
+define pic_funcall
+        [SPOFF] [id] '( [list pic_arg] ') '; [SPON] [NL]
+end define
+ 
+define pic_arg
+        [stringlit] | [id] | [number] | [repeat comment_geometry_position] | [repeat comment_geometry_size] [repeat stringlit+]
+end define
+ 
+define param_assignment
+        [id] '= [pic_arg] [NL]
+end define

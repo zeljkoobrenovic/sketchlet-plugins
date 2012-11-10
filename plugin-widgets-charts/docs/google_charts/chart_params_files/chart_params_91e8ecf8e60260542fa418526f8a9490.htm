@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Google Developers</title>
+    <link rel="stylesheet" type="text/css" href="chart_params_91e8ecf8e60260542fa418526f8a9490_data/screen.css">
+    <link rel="stylesheet" href="chart_params_91e8ecf8e60260542fa418526f8a9490_data/default.css" type="text/css">
+    <link href="chart_params_91e8ecf8e60260542fa418526f8a9490_data/css.css" rel="stylesheet" type="text/css">
+    <script src="chart_params_files/jquery.js"></script>
+    <script id="jqueryui" src="chart_params_files/jquery-ui.js" defer="defer" async=""></script>
+    <script src="chart_params_files/jsapi"></script>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="docs framebox_body">
+
+<table>
+  <tbody><tr style="border:0;" valign="top">
+    <td style="vertical-align: top; border:0; text-align:center;"><strong>Chart String</strong><br>
+      <em>(everything after https://chart.googleapis.com/chart?)</em><br></td>
+    <td rowspan="2" style="border:0; vertical-align:middle;"><input value="Encode &gt;" onclick="encodeSimple();" type="button"></td>
+    <td style="vertical-align: top; border:0; text-align:center"><strong> Encoded
+        Text </strong></td>
+  </tr>
+  <tr style="border:0;" valign="top">
+    <td style="vertical-align: top; border:0"><textarea name="unencodedEmbeddedChart" cols="50" rows="5" id="unencodedEmbeddedChart">cht=p&amp;chd=s:Uf9a&amp;chs=75x50</textarea></td>
+    <td style="vertical-align: top; border:0">
+      <pre id="encodedEmbeddedChart" style="margin-top:0em; padding:0em">
+  <script language="JavaScript" type="text/javascript">
+    function encodeSimple(){
+      var input = $('textarea#unencodedEmbeddedChart').val();
+      input = input.replace(/http:\/\/\d?chart\.apis\.google\.com\/chart\?/,'');
+      var arrInput = input.split(/[&=]/);
+      var result = [];
+      for(i = 0; i < arrInput.length; i++){
+        var tmp = arrInput[i];
+        tmp = tmp.replace(/\%7c/gi,"|");
+        tmp = tmp.replace(/@/g, "@@");
+        tmp = tmp.replace(/%/g, "%25");
+        tmp = tmp.replace(/\,/g, "@,");
+        tmp = tmp.replace(/\|/g, "@|");
+        tmp = tmp.replace(/;/g, "@;");
+        tmp = tmp.replace(/&/g, "%26");
+        tmp = tmp.replace(/=/g, "%3D");
+        result.push(tmp);
+      }
+      result = "chem=y;s=ICON_STRING_CONSTANT;ds=WHICH_SERIES;dp=WHICH_POINTS;d=FRAME_TYPE,PADDING,FRAME_COLOR,FILL_COLOR," + result.join(",");
+      $('pre#encodedEmbeddedChart').text(result);
+    }
+  </script>
+
+      </pre></td>
+  </tr>
+</tbody></table>
+
+
+
+</body></html>
