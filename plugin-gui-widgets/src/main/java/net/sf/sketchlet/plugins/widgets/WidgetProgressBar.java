@@ -23,10 +23,8 @@ import java.awt.font.LineMetrics;
 public class WidgetProgressBar extends WidgetPlugin {
 
     public static final String VARIABLE_LINK_PROPERTY = "variable link";
+
     private double position = 0.0;
-    private int startX;
-    private int startY;
-    private int dX;
     private int selectedRegion = -1;
 
     public WidgetProgressBar(final ActiveRegionContext region) {

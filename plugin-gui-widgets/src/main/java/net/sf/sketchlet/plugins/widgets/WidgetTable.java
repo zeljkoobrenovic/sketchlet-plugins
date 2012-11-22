@@ -28,6 +28,7 @@ public class WidgetTable extends WidgetPlugin {
     public static final String VARIABLE_TEXT_ITEM_PROPERTY = "variable text item";
     public static final String VISIBLE_ITEMS_PROPERTY = "visible items";
     public static final String START_ITEM_PROPERTY = "start item";
+
     private int selectedRow = -1;
     private int selectedColumn = -1;
 

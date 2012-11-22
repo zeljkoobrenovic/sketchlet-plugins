@@ -11,7 +11,9 @@ import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
 import net.sf.sketchlet.plugin.WidgetPluginTextItems;
+import net.sf.sketchlet.plugins.widgets.graphs.utils.DestroyThread;
 import net.sf.sketchlet.uml.ExternalPrograms;
+import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,6 +32,7 @@ import java.util.List;
         "UML Graph Documentation Page; http://www.umlgraph.org/doc.html"
 })
 public class WidgetUMLGraph extends ExternalImageProgramGeneratorWidget {
+    private static final Logger log = Logger.getLogger(WidgetUMLGraph.class);
 
     @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2"})
     private String cmdLineParams = "";
@@ -51,14 +54,13 @@ public class WidgetUMLGraph extends ExternalImageProgramGeneratorWidget {
             srcFile = File.createTempFile("umlgraph", ".java");
             dotFile = File.createTempFile("umlgraph", ".dot");
             imgFile = File.createTempFile("umlgraph", ".png");
+
             FileUtils.saveFileText(srcFile, strUML);
-            // PrintWriter err = new PrintWriter(new StringWriter());
-            StringWriter strw = new StringWriter();
-            PrintWriter err = new PrintWriter(strw);
+
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter err = new PrintWriter(stringWriter);
             com.sun.tools.javadoc.Main.execute("UmlGraph",
                     err, err, err, "net.sf.sketchlet.umlgraph.doclet.UmlGraph", new String[]{"-package", "-output", dotFile.getAbsolutePath(), srcFile.getAbsolutePath()});
-
-            SketchletPluginLogger.debug(strw.toString());
 
             if (this.getActiveRegionContext() == null) {
                 return;
@@ -99,7 +101,7 @@ public class WidgetUMLGraph extends ExternalImageProgramGeneratorWidget {
                 setTimeout(true);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             setTimeout(true);
         } finally {
             if (srcFile != null) {

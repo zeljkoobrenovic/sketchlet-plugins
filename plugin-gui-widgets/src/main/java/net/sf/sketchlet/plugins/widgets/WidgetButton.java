@@ -17,29 +17,28 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Button", type = "widget", group="GUI Controls")
+@PluginInfo(name = "Button", type = "widget", group = "GUI Controls")
 @WidgetPluginEvents(events = {WidgetButton.EVENT_CLICK, WidgetButton.EVENT_PRESS, WidgetButton.EVENT_RELEASE})
 public class WidgetButton extends WidgetPlugin {
 
     public final static String EVENT_CLICK = "click";
     public final static String EVENT_PRESS = "press";
     public final static String EVENT_RELEASE = "release";
-    //
+
     @WidgetPluginProperty(name = "update variable", initValue = "button", description = "[out] A variable updated on press and release")
     private String updateVariable = "";
-    //
+
     @WidgetPluginProperty(name = "value on pressed", initValue = "pressed", description = "A variable value on click")
     private String valueOnPressed = "";
-    //
+
     @WidgetPluginProperty(name = "value on released", initValue = "released", description = "A variable value on click")
     private String valueOnReleased = "";
-    //
+
     @WidgetPluginProperty(name = "caption", initValue = "Button", description = "A caption of the button")
     private String caption = "";
-    //
+
     private boolean pressed = false;
 
     public WidgetButton(final ActiveRegionContext region) {

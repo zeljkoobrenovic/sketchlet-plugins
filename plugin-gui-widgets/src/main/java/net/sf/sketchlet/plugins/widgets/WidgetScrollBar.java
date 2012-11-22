@@ -27,6 +27,7 @@ import java.util.Locale;
 public class WidgetScrollBar extends WidgetPlugin {
 
     public static final String UPDATE_VARIABLE_PROPERTY = "update variable";
+
     private double relativePosition = 0.0;
     private int selectedRegion = -1;
     private double min = 0.0;

@@ -18,6 +18,7 @@ public class WidgetList extends WidgetPlugin {
     public static final String ITEM_POSITION_VARIABLE_PROPERTY = "item position variable";
     public static final String VISIBLE_ITEMS_PROPERTY = "visible items";
     public static final String START_ITEM_PROPERTY = "start item";
+
     private int selectedRow = -1;
     private boolean radio = false;
 
@@ -137,7 +138,7 @@ public class WidgetList extends WidgetPlugin {
                 }
             }
             repaint();
-        } else if (getActiveRegionContext().getWidgetProperty("item position variable").equalsIgnoreCase(triggerVariable)) {
+        } else if (getActiveRegionContext().getWidgetProperty(ITEM_POSITION_VARIABLE_PROPERTY).equalsIgnoreCase(triggerVariable)) {
             try {
                 this.selectedRow = (int) Double.parseDouble(value) - 1;
             } catch (Exception e) {
@@ -177,9 +178,9 @@ public class WidgetList extends WidgetPlugin {
             VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty(ITEM_TEXT_VARIABLE_PROPERTY), ListUtils.getLineText(line));
         }
         ListUtils.executeCommandIfDefined(line);
-        if (!getActiveRegionContext().getWidgetProperty("item position variable").isEmpty()) {
+        if (!getActiveRegionContext().getWidgetProperty(ITEM_POSITION_VARIABLE_PROPERTY).isEmpty()) {
             changed = true;
-            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("item position variable"), Integer.toString(pos + 1));
+            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty(ITEM_POSITION_VARIABLE_PROPERTY), Integer.toString(pos + 1));
         }
 
         if (changed) {

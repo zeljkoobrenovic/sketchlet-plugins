@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package net.sf.sketchlet.plugins.widgets.graphs;
+package net.sf.sketchlet.plugins.widgets.graphs.utils;
 
 /*
  * This breaks a string into tokens.
@@ -40,18 +40,18 @@ public class QuotedStringTokenizer {
     /**
      * Remember the string and the current position.
      */
-    int index, length;
-    String str;
-    Character split;
+    private int index, length;
+    private String text;
+    private Character split;
 
     /**
      * Create a tokenizer from a string.
      * Start from the front.
      */
-    public QuotedStringTokenizer(String s) {
-        str = s;
+    public QuotedStringTokenizer(String text) {
+        this.text = text;
         index = 0;
-        length = s.length();
+        length = text.length();
     }
 
     /**
@@ -81,7 +81,7 @@ public class QuotedStringTokenizer {
      */
     private void skipWhite() {
         while (index != length) {
-            if (isWhitespace(str.charAt(index)) == false) {
+            if (isWhitespace(text.charAt(index)) == false) {
                 break;
             }
             index++;
@@ -101,30 +101,11 @@ public class QuotedStringTokenizer {
         // Collect until next quote
         loop:
         while (index != length) {
-            char c = str.charAt(index);
+            char c = text.charAt(index);
             switch (c) {
                 case '"':
                     index++;
                     break loop;
-                /*
-                case '\\':
-                if(index < length - 1)
-                index++;
-                c = str.charAt(index);
-                switch(c) {
-                case 't':
-                c = '\t';
-                break;
-                case 'r':
-                c = '\r';
-                break;
-                case 'n':
-                c = '\n';
-                break;
-                }
-                buffer.append(c);
-                break;
-                 */
                 default:
                     buffer.append(c);
                     break;
@@ -142,12 +123,12 @@ public class QuotedStringTokenizer {
     private String readString() {
         int start = index;
         while (index != length) {
-            if (isWhitespace(str.charAt(index))) {
+            if (isWhitespace(text.charAt(index))) {
                 break;
             }
             index++;
         }
-        return str.substring(start, index);
+        return text.substring(start, index);
     }
 
     /**
@@ -156,7 +137,7 @@ public class QuotedStringTokenizer {
     private String readRest() {
         int start = index;
         index = length;
-        return str.substring(start, length);
+        return text.substring(start, length);
     }
 
     /**
@@ -178,7 +159,7 @@ public class QuotedStringTokenizer {
         if (index == length) {
             return "";
         }
-        char c = str.charAt(index);
+        char c = text.charAt(index);
         if (c == '"') {
             arg = readQuotedString();
         } else {
@@ -207,7 +188,7 @@ public class QuotedStringTokenizer {
                 arg = readRest();
             } else {
                 // Determine if a quoted argument
-                char c = str.charAt(index);
+                char c = text.charAt(index);
                 if (c == '"') {
                     arg = readQuotedString();
                 } else {

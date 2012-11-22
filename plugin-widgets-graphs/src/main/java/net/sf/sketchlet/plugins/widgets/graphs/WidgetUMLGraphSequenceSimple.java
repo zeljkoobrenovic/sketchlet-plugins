@@ -11,6 +11,7 @@ import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
 import net.sf.sketchlet.plugin.WidgetPluginTextItems;
+import net.sf.sketchlet.plugins.widgets.graphs.utils.DestroyThread;
 import net.sf.sketchlet.uml.ExternalPrograms;
 
 import java.io.BufferedReader;

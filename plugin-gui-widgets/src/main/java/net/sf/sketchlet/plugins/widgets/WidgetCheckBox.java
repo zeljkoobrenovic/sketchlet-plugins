@@ -25,19 +25,18 @@ public class WidgetCheckBox extends WidgetPlugin {
     public final static String EVENT_SELECT = "select";
     public final static String EVENT_DESELECT = "deselect";
 
-    //
     @WidgetPluginProperty(name = "update variable", initValue = "checkbox", description = "[in/out] A variable updated on click")
     private String updateVariable = "";
-    //
+
     @WidgetPluginProperty(name = "value selected", initValue = "true", description = "A variable updated on click")
     private String selectedValue = "";
-    //
+
     @WidgetPluginProperty(name = "value unselected", initValue = "false", description = "A variable updated on click")
     private String unselectedValue = "";
-    //
+
     @WidgetPluginProperty(name = "caption", initValue = "Check Box", description = "A caption of the check box")
     private String caption;
-    //
+
     private boolean selected = false;
 
     public WidgetCheckBox(final ActiveRegionContext region) {

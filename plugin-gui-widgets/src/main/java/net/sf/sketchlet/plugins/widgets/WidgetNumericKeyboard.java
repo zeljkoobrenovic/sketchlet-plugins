@@ -25,12 +25,15 @@ import java.awt.font.FontRenderContext;
 public class WidgetNumericKeyboard extends WidgetPlugin {
 
     public static final String VARIABLE_DIGITS_PROPERTY = "variable digits";
+
     private boolean pressed = false;
+    public static final String CLEAR_KEY = "clear";
+    public static final String ENTER_KEY = "enter";
     private static String keys[][] = {
-            {"clear", "=", "/", "*"},
+            {CLEAR_KEY, "=", "/", "*"},
             {"7", "8", "9", "-"},
             {"4", "5", "6", "+"},
-            {"1", "2", "3", "enter"},
+            {"1", "2", "3", ENTER_KEY},
             {"0", "", ".", ""},};
     private static int rowSizes[][] = {
             {1, 1, 1, 1},
@@ -99,7 +102,6 @@ public class WidgetNumericKeyboard extends WidgetPlugin {
         g2.setStroke(getActiveRegionContext().getStroke());
         Color c = getActiveRegionContext().getLineColor();
         g2.setColor(c);
-        // g2.drawRect(x, y, w, h);
 
         int keyw = w / 4;
         int keyh = h / 5;
@@ -174,9 +176,9 @@ public class WidgetNumericKeyboard extends WidgetPlugin {
         if (!selectedKey.isEmpty()) {
             if (!getActiveRegionContext().getWidgetProperty(VARIABLE_DIGITS_PROPERTY).isEmpty()) {
                 VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable key"), selectedKey);
-                if (selectedKey.equalsIgnoreCase("clear")) {
+                if (selectedKey.equalsIgnoreCase(CLEAR_KEY)) {
                     VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty(VARIABLE_DIGITS_PROPERTY), "");
-                } else if (selectedKey.equalsIgnoreCase("enter")) {
+                } else if (selectedKey.equalsIgnoreCase(ENTER_KEY)) {
                     clearTextNextTimeFlagSet = true;
                 } else {
                     if (clearTextNextTimeFlagSet) {

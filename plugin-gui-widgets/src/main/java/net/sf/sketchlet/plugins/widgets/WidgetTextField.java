@@ -16,12 +16,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Text Field", type="widget", group="GUI Controls")
+@PluginInfo(name = "Text Field", type = "widget", group = "GUI Controls")
 @WidgetPluginProperties(properties = {
-    "update variable|textfield|[in/out] A variable updated"})
+        "update variable|textfield|[in/out] A variable updated"})
 public class WidgetTextField extends WidgetPlugin {
     public static final String UPDATE_VARIABLE_PROPERTY = "update variable";
 
@@ -71,6 +70,30 @@ public class WidgetTextField extends WidgetPlugin {
         drawTick(g2, x, y, w, h, (int) textWidth);
     }
 
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (value.length() > 0) {
+                value = value.substring(0, value.length() - 1);
+                updateVariable();
+            }
+        } else {
+            if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+                value += e.getKeyChar();
+                updateVariable();
+            }
+        }
+        repaint();
+    }
+
+    @Override
+    public void variableUpdated(String triggerVariable, String value) {
+        if (getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).equalsIgnoreCase(triggerVariable)) {
+            this.value = value;
+            repaint();
+        }
+    }
+
     private void drawTick(Graphics2D g2, int x, int y, int w, int h, int textWidth) {
         if (hasFocus()) {
             if (drawTickEnabled) {
@@ -96,30 +119,6 @@ public class WidgetTextField extends WidgetPlugin {
                     }
                 }
             });
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (value.length() > 0) {
-                value = value.substring(0, value.length() - 1);
-                updateVariable();
-            }
-        } else {
-            if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-                value += e.getKeyChar();
-                updateVariable();
-            }
-        }
-        repaint();
-    }
-
-    @Override
-    public void variableUpdated(String triggerVariable, String value) {
-        if (getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).equalsIgnoreCase(triggerVariable)) {
-            this.value = value;
-            repaint();
         }
     }
 
