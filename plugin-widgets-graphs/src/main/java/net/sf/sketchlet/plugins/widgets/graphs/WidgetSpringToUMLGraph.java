@@ -22,53 +22,46 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "UMLGraph / Spring Configuration", type = "widget", group="UML", position = 285)
+@PluginInfo(name = "UMLGraph / Spring Configuration", type = "widget", group = "UML", position = 285)
 @WidgetPluginTextItems(initValue = "")
 @WidgetPluginLinks(links = {
-    "Spring Reference; http://static.springsource.org/spring/docs/2.5.x/reference/xsd-config.html"
+        "Spring Reference; http://static.springsource.org/spring/docs/2.5.x/reference/xsd-config.html"
 })
 public class WidgetSpringToUMLGraph extends WidgetUMLGraph {
-    //
 
-    @WidgetPluginProperty(name = "dot parameters", initValue = "",
-    description = "Additional parameters to be sent to the dot program",
-    valueList = {"-Gratio=0.7 -Eminlen=2"})
-    protected String cmdLineParams = "";
-    //
+    @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2"})
+    private String cmdLineParams = "";
+
     @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size")
-    protected boolean resizeRegion = true;
+    private boolean resizeRegionEnabled = true;
+
+    private String umlGraphCode = "";
 
     public WidgetSpringToUMLGraph(ActiveRegionContext region) {
         super(region);
     }
-    String code = "";
-    String prevText = "";
 
     @Override
     protected String getUMLGraphCode() {
         String text = getActiveRegionContext().getWidgetItemText();
-        code = SpringConfigSaxLoader.parse(text);
+        umlGraphCode = SpringConfigSaxLoader.parse(text);
 
-        super.cmdLineParams = this.cmdLineParams;
-        super.resizeRegion = this.resizeRegion;
-        return code;
+        super.setCmdLineParams(this.cmdLineParams);
+        super.setResizingRegion(this.resizeRegionEnabled);
+        return umlGraphCode;
     }
 }
 
 class SpringConfigSaxLoader extends DefaultHandler {
-
-    public SpringConfigSaxLoader() {
-        super();
-    }
     private Map<String, Bean> beans = new HashMap<String, Bean>();
     private Bean globalStateBean = new Bean("");
     private Bean currentBean;
     private static Map<String, String> stereotypeColors = new HashMap<String, String>();
     private String currentElement;
     private StringBuffer result = new StringBuffer();
+    private String characters = "";
 
     static {
         stereotypeColors.put("", "skyblue");
@@ -77,6 +70,10 @@ class SpringConfigSaxLoader extends DefaultHandler {
         stereotypeColors.put("decision-state", "darkseagreen");
         stereotypeColors.put("view-state", "yellow");
         stereotypeColors.put("end-state", "gray");
+    }
+
+    public SpringConfigSaxLoader() {
+        super();
     }
 
     private static String getColor(String stereotype) {
@@ -163,12 +160,12 @@ class SpringConfigSaxLoader extends DefaultHandler {
         }
 
         currentElement = strElem;
-        strCharacters = "";
+        characters = "";
         String id = atts.getValue("id");
         if (id == null && strElem.equalsIgnoreCase("pipe")) {
             id = atts.getValue("name");
         }
-        
+
         if (id == null && strElem.equalsIgnoreCase("bean")) {
             id = getShortClassName(atts.getValue("class"), true);
         } else if (id == null && strElem.equalsIgnoreCase("global-transitions")) {
@@ -220,7 +217,7 @@ class SpringConfigSaxLoader extends DefaultHandler {
                         String meth = atts.getValue("method");
                         if (meth != null && !meth.isEmpty()) {
                             currentBean.associations.add(new String[]{
-                                        "- \"" + strElem + " / " + meth + "\" -", b.name});
+                                    "- \"" + strElem + " / " + meth + "\" -", b.name});
                         }
                     } else {
                         String assocName = "-";
@@ -259,23 +256,22 @@ class SpringConfigSaxLoader extends DefaultHandler {
 
         currentElement = null;
     }
-    String strCharacters = "";
 
     @Override
     public void characters(char ch[], int start, int length) {
         if (currentElement != null) {
             String strValue = new String(ch, start, length);
-            strCharacters += strValue;
+            characters += strValue;
         }
     }
 
-    public void processCharacters() {
-        strCharacters = strCharacters.replace("\\n", "\n");
-        strCharacters = strCharacters.replace("\\r", "\r");
-        strCharacters = strCharacters.replace("\\t", "\t");
-        strCharacters = strCharacters.replace("&lt;", "<");
-        strCharacters = strCharacters.replace("&gt;", ">");
-        strCharacters = strCharacters.replace("&amp;", "&");
+    private void processCharacters() {
+        characters = characters.replace("\\n", "\n");
+        characters = characters.replace("\\r", "\r");
+        characters = characters.replace("\\t", "\t");
+        characters = characters.replace("&lt;", "<");
+        characters = characters.replace("&gt;", ">");
+        characters = characters.replace("&amp;", "&");
         if (currentElement == null) {
             return;
         }
@@ -285,12 +281,10 @@ class SpringConfigSaxLoader extends DefaultHandler {
 
     class Bean {
 
-        public Bean() {
-        }
-
         public Bean(String name) {
             this.name = name;
         }
+
         String stereotype = "";
         String name = "";
         String className = "";

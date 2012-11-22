@@ -4,22 +4,18 @@
  */
 package net.sf.sketchlet.plugins.varspaces.table.ui;
 
+import net.sf.sketchlet.common.translation.Language;
 import net.sf.sketchlet.plugins.varspaces.table.Table;
 import net.sf.sketchlet.plugins.varspaces.table.TableColumn;
-import net.sf.sketchlet.common.translation.Language;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
+import net.sf.sketchlet.util.UtilContext;
+
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import net.sf.sketchlet.util.UtilContext;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -76,13 +72,13 @@ public class ColumnsDialog extends JDialog {
 
             public void actionPerformed(ActionEvent ae) {
                 int n = jTable.getSelectedRow();
-                int tn = parentPanel.tabs.getSelectedIndex();
+                int tn = parentPanel.getTabs().getSelectedIndex();
                 if (n >= 0 && tn >= 0) {
                     table.dropColumn(n);
                     model.fireTableStructureChanged();
                     model.fireTableDataChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableStructureChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableDataChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableStructureChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableDataChanged();
                 }
             }
         });
@@ -90,13 +86,13 @@ public class ColumnsDialog extends JDialog {
 
             public void actionPerformed(ActionEvent ae) {
                 int n = jTable.getSelectedRow();
-                int tn = parentPanel.tabs.getSelectedIndex();
+                int tn = parentPanel.getTabs().getSelectedIndex();
                 if (n > 0 && tn >= 0) {
                     table.replaceColumns(n, n - 1);
                     model.fireTableStructureChanged();
                     model.fireTableDataChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableStructureChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableDataChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableStructureChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableDataChanged();
                     jTable.getSelectionModel().setSelectionInterval(n - 1, n - 1);
                 }
             }
@@ -105,13 +101,13 @@ public class ColumnsDialog extends JDialog {
 
             public void actionPerformed(ActionEvent ae) {
                 int n = jTable.getSelectedRow();
-                int tn = parentPanel.tabs.getSelectedIndex();
-                if (n >= 0 && n < table.columns.size() - 1 && tn >= 0) {
+                int tn = parentPanel.getTabs().getSelectedIndex();
+                if (n >= 0 && n < table.getColumns().size() - 1 && tn >= 0) {
                     table.replaceColumns(n, n + 1);
                     model.fireTableStructureChanged();
                     model.fireTableDataChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableStructureChanged();
-                    parentPanel.tablePanels.elementAt(tn).model.fireTableDataChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableStructureChanged();
+                    parentPanel.getTablePanels().get(tn).getTableModel().fireTableDataChanged();
                     jTable.getSelectionModel().setSelectionInterval(n + 1, n + 1);
                 }
             }
@@ -129,7 +125,7 @@ public class ColumnsDialog extends JDialog {
         int n = this.jTable.getSelectedRow();
         this.deleteBtn.setEnabled(n >= 0);
         this.upBtn.setEnabled(n > 0);
-        this.downBtn.setEnabled(n >= 0 && n < this.table.columns.size() - 1);
+        this.downBtn.setEnabled(n >= 0 && n < this.table.getColumns().size() - 1);
     }
 
     class ColumnsTableModel extends AbstractTableModel {
@@ -139,7 +135,7 @@ public class ColumnsDialog extends JDialog {
         }
 
         public int getRowCount() {
-            return table.columns.size() + 1;
+            return table.getColumns().size() + 1;
         }
 
         public int getColumnCount() {
@@ -147,17 +143,17 @@ public class ColumnsDialog extends JDialog {
         }
 
         public Object getValueAt(int row, int col) {
-            if (row >= table.columns.size()) {
+            if (row >= table.getColumns().size()) {
                 return "";
             } else {
-                TableColumn column = table.columns.elementAt(row);
+                TableColumn column = table.getColumns().get(row);
                 switch (col) {
                     case 0:
-                        return column.name;
+                        return column.getName();
                     case 1:
-                        return column.type;
+                        return column.getType();
                     case 2:
-                        return column.defaultValue;
+                        return column.getDefaultValue();
                     default:
                         return "";
                 }
@@ -170,26 +166,26 @@ public class ColumnsDialog extends JDialog {
         }
 
         public void setValueAt(Object value, int row, int col) {
-            if (row == table.columns.size()) {
+            if (row == table.getColumns().size()) {
                 table.addNewColumn();
             }
-            TableColumn column = table.columns.elementAt(row);
+            TableColumn column = table.getColumns().get(row);
             switch (col) {
                 case 0:
-                    column.name = value.toString();
+                    column.setName(value.toString());
                     break;
                 case 1:
-                    column.type = value.toString();
+                    column.setType(value.toString());
                     break;
                 case 2:
-                    column.defaultValue = value.toString();
+                    column.setDefaultValue(value.toString());
                     break;
             }
             model.fireTableStructureChanged();
             model.fireTableDataChanged();
-            int tn = parentPanel.tabs.getSelectedIndex();
-            parentPanel.tablePanels.elementAt(tn).model.fireTableStructureChanged();
-            parentPanel.tablePanels.elementAt(tn).model.fireTableDataChanged();
+            int tn = parentPanel.getTabs().getSelectedIndex();
+            parentPanel.getTablePanels().get(tn).getTableModel().fireTableStructureChanged();
+            parentPanel.getTablePanels().get(tn).getTableModel().fireTableDataChanged();
         }
 
         public Class getColumnClass(int c) {

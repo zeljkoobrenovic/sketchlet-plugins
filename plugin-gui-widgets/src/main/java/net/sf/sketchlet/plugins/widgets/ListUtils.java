@@ -7,10 +7,12 @@ package net.sf.sketchlet.plugins.widgets;
 import net.sf.sketchlet.context.SketchletContext;
 
 /**
- *
  * @author zobrenovic
  */
 public class ListUtils {
+
+    private ListUtils() {
+    }
 
     public static String getLineText(String line) {
         int n1 = line.indexOf("{");

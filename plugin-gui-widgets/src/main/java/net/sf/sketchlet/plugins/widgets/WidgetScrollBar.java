@@ -17,103 +17,29 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Scroll Bar", type="widget", group="GUI Controls")
+@PluginInfo(name = "Scroll Bar", type = "widget", group = "GUI Controls")
 @WidgetPluginProperties(properties = {
-    "update variable|scrollbar|[in/out] A variable updated",
-    "min value|0|[in/out] Minimal value",
-    "max value|1|[in/out] Maximal value"})
+        "update variable|scrollbar|[in/out] A variable updated",
+        "min value|0|[in/out] Minimal value",
+        "max value|1|[in/out] Maximal value"})
 public class WidgetScrollBar extends WidgetPlugin {
 
-    double relativePosition = 0.0;
-    int startX;
-    int startY;
-    int dX;
+    public static final String UPDATE_VARIABLE_PROPERTY = "update variable";
+    private double relativePosition = 0.0;
+    private int selectedRegion = -1;
+    private double min = 0.0;
+    private double max = 1.0;
 
     public WidgetScrollBar(final ActiveRegionContext region) {
         super(region);
-        String strControlVariable = getActiveRegionContext().getWidgetProperty("update variable");
-        if (!strControlVariable.isEmpty()) {
-            this.variableUpdated(strControlVariable, VariablesBlackboardContext.getInstance().getVariableValue(strControlVariable));
-        }
-    }
-    int selectedRegion = -1;
-    double min = 0.0;
-    double max = 1.0;
-
-    private void calculateMinMax() {
-        try {
-            min = Double.parseDouble(getActiveRegionContext().getWidgetProperty("min value"));
-        } catch (Exception e) {
-        }
-
-        try {
-            max = Double.parseDouble(getActiveRegionContext().getWidgetProperty("max value"));
-        } catch (Exception e) {
+        String updateVariableName = getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY);
+        if (!updateVariableName.isEmpty()) {
+            this.variableUpdated(updateVariableName, VariablesBlackboardContext.getInstance().getVariableValue(updateVariableName));
         }
     }
 
-    private double getAbsolute(double relValue) {
-        calculateMinMax();
-
-        if (this.min != this.max) {
-            return this.min + (this.max - this.min) * relValue;
-        }
-
-        return relValue;
-    }
-
-    private double getRelative(double value) {
-        calculateMinMax();
-
-        if (this.min != this.max) {
-            return (value - this.min) / (this.max - this.min);
-        }
-
-        return value;
-    }
-
-    private void setPosition(double pos) {
-        if (pos < 0) {
-            pos = 0;
-        } else if (pos > 1) {
-            pos = 1;
-        }
-
-        this.relativePosition = pos;
-
-        pos = this.getAbsolute(pos);
-
-        DecimalFormat df = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
-        String strPos = df.format(pos);
-
-        if (!getActiveRegionContext().getWidgetProperty("update variable").isEmpty()) {
-            VariablesBlackboardContext.getInstance().updateVariableIfDifferent(getActiveRegionContext().getWidgetProperty("update variable"), strPos);
-        }
-    }
-
-    private int getScrollbarRegion(int x, int y) {
-        int w = getActiveRegionContext().getWidth();
-        int h = getActiveRegionContext().getHeight();
-
-        if (y >= 0 && y <= h && x >= 0 && x <= w) {
-            if (x <= h) {
-                return 1;
-            } else if (x >= w - h) {
-                return 2;
-            } else {
-                int len = w - 3 * h;
-
-                if (len > 0 && x >= h + len * relativePosition && x <= 2 * h + len * relativePosition) {
-                    return 3;
-                }
-            }
-        }
-
-        return -1;
-    }
 
     @Override
     public void paint(Graphics2D g2) {
@@ -161,12 +87,8 @@ public class WidgetScrollBar extends WidgetPlugin {
     public void mousePressed(MouseEvent me) {
         int x = me.getX();
         int y = me.getY();
-        startX = x;
-        startY = y;
         int w = getActiveRegionContext().getWidth();
         int h = getActiveRegionContext().getHeight();
-        int len = w - 3 * h;
-        dX = (int) (x - (h + len * relativePosition));
         selectedRegion = getScrollbarRegion(x, y);
 
         if (selectedRegion == 1) {
@@ -199,12 +121,84 @@ public class WidgetScrollBar extends WidgetPlugin {
 
     @Override
     public void variableUpdated(String triggerVariable, String value) {
-        if (selectedRegion == -1 && getActiveRegionContext().getWidgetProperty("update variable").equalsIgnoreCase(triggerVariable)) {
+        if (selectedRegion == -1 && getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).equalsIgnoreCase(triggerVariable)) {
             try {
                 this.setPosition(this.getRelative(Double.parseDouble(value)));
                 repaint();
             } catch (Exception e) {
             }
         }
+    }
+
+    private void calculateMinMax() {
+        try {
+            min = Double.parseDouble(getActiveRegionContext().getWidgetProperty("min value"));
+        } catch (Exception e) {
+        }
+
+        try {
+            max = Double.parseDouble(getActiveRegionContext().getWidgetProperty("max value"));
+        } catch (Exception e) {
+        }
+    }
+
+    private double getAbsolute(double relValue) {
+        calculateMinMax();
+
+        if (this.min != this.max) {
+            return this.min + (this.max - this.min) * relValue;
+        }
+
+        return relValue;
+    }
+
+    private double getRelative(double value) {
+        calculateMinMax();
+
+        if (this.min != this.max) {
+            return (value - this.min) / (this.max - this.min);
+        }
+
+        return value;
+    }
+
+    private void setPosition(double pos) {
+        if (pos < 0) {
+            pos = 0;
+        } else if (pos > 1) {
+            pos = 1;
+        }
+
+        this.relativePosition = pos;
+
+        pos = this.getAbsolute(pos);
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
+        String position = decimalFormat.format(pos);
+
+        if (!getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).isEmpty()) {
+            VariablesBlackboardContext.getInstance().updateVariableIfDifferent(getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY), position);
+        }
+    }
+
+    private int getScrollbarRegion(int x, int y) {
+        int w = getActiveRegionContext().getWidth();
+        int h = getActiveRegionContext().getHeight();
+
+        if (y >= 0 && y <= h && x >= 0 && x <= w) {
+            if (x <= h) {
+                return 1;
+            } else if (x >= w - h) {
+                return 2;
+            } else {
+                int len = w - 3 * h;
+
+                if (len > 0 && x >= h + len * relativePosition && x <= 2 * h + len * relativePosition) {
+                    return 3;
+                }
+            }
+        }
+
+        return -1;
     }
 }

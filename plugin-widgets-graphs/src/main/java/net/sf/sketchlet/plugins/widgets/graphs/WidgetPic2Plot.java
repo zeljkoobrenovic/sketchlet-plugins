@@ -4,17 +4,8 @@
  */
 package net.sf.sketchlet.plugins.widgets.graphs;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import net.sf.sketchlet.common.file.FileUtils;
 import net.sf.sketchlet.context.ActiveRegionContext;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 import net.sf.sketchlet.context.SketchletGraphicsContext;
 import net.sf.sketchlet.uml.ExternalPrograms;
 import org.apache.batik.transcoder.TranscoderException;
@@ -22,20 +13,24 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author zobrenovic
  */
-public class WidgetPic2Plot extends ExternalImageProgramCallerWidget {
+public class WidgetPic2Plot extends ExternalImageProgramGeneratorWidget {
+    private double scale = 1.34;
+    private String cmdLineParams = "";
 
     public WidgetPic2Plot(ActiveRegionContext region) {
         super(region);
-    }
-    protected double scale = 1.34;
-    protected String cmdLineParams = "";
-
-    protected String getPicText() {
-        return getActiveRegionContext().getWidgetItemText();
     }
 
     @Override
@@ -59,7 +54,7 @@ public class WidgetPic2Plot extends ExternalImageProgramCallerWidget {
             plotutilsParams.add(ExternalPrograms.getPlotUtilsPath());
             plotutilsParams.add("-T");
             plotutilsParams.add("svg");
-            String params[] = cmdLineParams.split(" ");
+            String params[] = getCmdLineParams().split(" ");
             for (String param : params) {
                 if (!param.trim().isEmpty()) {
                     plotutilsParams.add(param.trim());
@@ -90,7 +85,11 @@ public class WidgetPic2Plot extends ExternalImageProgramCallerWidget {
         }
     }
 
-    protected String replaceTagValue(String code, String tag, String value) {
+    protected String getPicText() {
+        return getActiveRegionContext().getWidgetItemText();
+    }
+
+    private String replaceTagValue(String code, String tag, String value) {
         String start = tag + "=\"";
         int n1 = code.indexOf(start);
         int n2 = code.indexOf("\"", n1 + start.length() + 1);
@@ -100,19 +99,18 @@ public class WidgetPic2Plot extends ExternalImageProgramCallerWidget {
         return code;
     }
 
-    protected BufferedImage getImageFromSVGCode(String strSVG, int w, int h, BufferedImage oldImage) {
+    private BufferedImage getImageFromSVGCode(String strSVG, int w, int h, BufferedImage oldImage) {
         BufferedImage image = null;
         strSVG = strSVG.replace("fill-rule:even-odd;", "");
         strSVG = strSVG.replace("fill-rule:even-odd", "");
         strSVG = replaceTagValue(strSVG, "width", "" + w + "px");
         strSVG = replaceTagValue(strSVG, "height", "" + h + "px");
-        // strSVG = replaceTagValue(strSVG, "viewBox", "0 0 " + w + " " + h);
 
         int n1 = strSVG.indexOf("<g ");
         int n2 = strSVG.lastIndexOf("</g>");
         if (n1 > 0 && n2 > n1) {
-            double t = (1 - scale) / 2;
-            String strT = "<g transform=\"translate(" + t + "," + t + ") scale(" + scale + "," + scale + ")\">\n";
+            double t = (1 - getScale()) / 2;
+            String strT = "<g transform=\"translate(" + t + "," + t + ") scale(" + getScale() + "," + getScale() + ")\">\n";
             strSVG = strSVG.substring(0, n1) + strT + strSVG.substring(n1, n2) + "</g>\n" + strSVG.substring(n2);
         }
 
@@ -142,6 +140,22 @@ public class WidgetPic2Plot extends ExternalImageProgramCallerWidget {
         image.flush();
 
         return img;
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
+    public String getCmdLineParams() {
+        return cmdLineParams;
+    }
+
+    public void setCmdLineParams(String cmdLineParams) {
+        this.cmdLineParams = cmdLineParams;
     }
 
     static class BufferedImageTranscoder extends ImageTranscoder {

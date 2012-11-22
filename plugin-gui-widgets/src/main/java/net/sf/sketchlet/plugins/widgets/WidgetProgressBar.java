@@ -11,63 +11,30 @@ import net.sf.sketchlet.plugin.WidgetPlugin;
 import net.sf.sketchlet.plugin.WidgetPluginProperties;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Progress Bar", type="widget", group="GUI Controls")
+@PluginInfo(name = "Progress Bar", type = "widget", group = "GUI Controls")
 @WidgetPluginProperties(properties = {
-    "variable link|progress|[in] A variable updated"})
+        "variable link|progress|[in] A variable updated"})
 public class WidgetProgressBar extends WidgetPlugin {
 
-    double position = 0.0;
-    int startX;
-    int startY;
-    int dX;
+    public static final String VARIABLE_LINK_PROPERTY = "variable link";
+    private double position = 0.0;
+    private int startX;
+    private int startY;
+    private int dX;
+    private int selectedRegion = -1;
 
     public WidgetProgressBar(final ActiveRegionContext region) {
         super(region);
-        String strControlVariable = getActiveRegionContext().getWidgetProperty("variable link");
-        if (!strControlVariable.isEmpty()) {
-            this.variableUpdated(strControlVariable, VariablesBlackboardContext.getInstance().getVariableValue(strControlVariable));
+        String linkVariableName = getActiveRegionContext().getWidgetProperty(VARIABLE_LINK_PROPERTY);
+        if (!linkVariableName.isEmpty()) {
+            this.variableUpdated(linkVariableName, VariablesBlackboardContext.getInstance().getVariableValue(linkVariableName));
         }
-    }
-    int selectedRegion = -1;
-
-    public void setPosition(double pos) {
-        if (pos < 0) {
-            pos = 0;
-        } else if (pos > 1) {
-            pos = 1;
-        }
-
-        position = pos;
-    }
-
-    private int getRegion(int x, int y) {
-
-        int w = getActiveRegionContext().getWidth();
-        int h = getActiveRegionContext().getHeight();
-
-        if (y >= 0 && y <= h && x >= 0 && x <= w) {
-            if (x <= h) {
-                return 1;
-            } else if (x >= w - h) {
-                return 2;
-            } else {
-                int len = w - 3 * h;
-
-                if (len > 0 && x >= h + len * position && x <= h + h + len * position) {
-                    return 3;
-                }
-            }
-        }
-
-        return -1;
     }
 
     @Override
@@ -86,6 +53,17 @@ public class WidgetProgressBar extends WidgetPlugin {
         paintLabel(g2);
     }
 
+    @Override
+    public void variableUpdated(String triggerVariable, String value) {
+        if (selectedRegion == -1 && getActiveRegionContext().getWidgetProperty(VARIABLE_LINK_PROPERTY).equalsIgnoreCase(triggerVariable)) {
+            try {
+                this.setPosition(Double.parseDouble(value));
+                repaint();
+            } catch (Exception e) {
+            }
+        }
+    }
+
     private void paintLabel(Graphics2D g2) {
         int w = getActiveRegionContext().getWidth();
         int h = getActiveRegionContext().getHeight();
@@ -102,41 +80,27 @@ public class WidgetProgressBar extends WidgetPlugin {
         FontRenderContext frc = g2.getFontRenderContext();
         Font font = g2.getFont();
 
-        String strText = getActiveRegionContext().getWidgetItemText();
-        LineMetrics metrics = font.getLineMetrics(strText, frc);
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        LineMetrics fontLineMetrics = font.getLineMetrics(widgetItemText, frc);
 
-        FontMetrics fm = g2.getFontMetrics();
-        String original = strText;
-        float textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+        String original = widgetItemText;
+        float textWidth = (float) font.getStringBounds(widgetItemText, frc).getMaxX();
         while (textWidth > w && original.length() > 0) {
             original = original.substring(0, original.length() - 1);
-            strText = original + "...";
-            textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+            widgetItemText = original + "...";
+            textWidth = (float) font.getStringBounds(widgetItemText, frc).getMaxX();
         }
 
-        g2.drawString(strText, x + w / 2 - textWidth / 2, y + metrics.getHeight());
+        g2.drawString(widgetItemText, x + w / 2 - textWidth / 2, y + fontLineMetrics.getHeight());
     }
 
-    @Override
-    public void mousePressed(MouseEvent me) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent me) {
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent me) {
-    }
-
-    @Override
-    public void variableUpdated(String triggerVariable, String value) {
-        if (selectedRegion == -1 && getActiveRegionContext().getWidgetProperty("variable link").equalsIgnoreCase(triggerVariable)) {
-            try {
-                this.setPosition(Double.parseDouble(value));
-                repaint();
-            } catch (Exception e) {
-            }
+    private void setPosition(double pos) {
+        if (pos < 0) {
+            pos = 0;
+        } else if (pos > 1) {
+            pos = 1;
         }
+
+        position = pos;
     }
 }

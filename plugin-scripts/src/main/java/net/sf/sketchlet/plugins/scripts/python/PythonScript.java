@@ -7,7 +7,6 @@ package net.sf.sketchlet.plugins.scripts.python;
 import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.script.ScriptPluginProxy;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.io.FileReader;
@@ -18,17 +17,17 @@ import java.io.FileReader;
 @PluginInfo(name = "Python", type = "script", properties = {"extension=py"})
 public class PythonScript extends ScriptPluginProxy {
 
-    Invocable invocableEngine;
-    ScriptEngineManager mgr;
+    private ScriptEngineManager manager;
 
     public PythonScript(File scriptFile) {
         super(scriptFile);
-        mgr = new ScriptEngineManager();
-        engine = mgr.getEngineByName("python");
+        manager = new ScriptEngineManager();
+        setEngine(manager.getEngineByName("python"));
     }
 
+    @Override
     public void loadScript(FileReader scriptFile) throws Exception {
-        setContext(engine);
-        engine.eval(scriptFile);
+        setContext(getEngine());
+        getEngine().eval(scriptFile);
     }
 }

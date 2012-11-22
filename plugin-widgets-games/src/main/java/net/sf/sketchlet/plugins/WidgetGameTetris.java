@@ -10,11 +10,16 @@ import net.sf.sketchlet.context.VariablesBlackboardContext;
 import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.plugin.WidgetPlugin;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
-import net.sf.sketchlet.plugins.tetris.*;
+import net.sf.sketchlet.plugins.tetris.BoardEvent;
+import net.sf.sketchlet.plugins.tetris.BoardListener;
+import net.sf.sketchlet.plugins.tetris.ScoreEvent;
+import net.sf.sketchlet.plugins.tetris.ScoreListener;
+import net.sf.sketchlet.plugins.tetris.TetrisBoard;
+import net.sf.sketchlet.plugins.tetris.TetrisGame;
+import net.sf.sketchlet.plugins.tetris.TetrisPiece;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
@@ -23,57 +28,55 @@ import java.awt.image.BufferedImage;
 @PluginInfo(name = "Tetris", type = "widget", group = "Games")
 public class WidgetGameTetris extends WidgetPlugin implements BoardListener {
 
-    private final TetrisGame fGame = new TetrisGame();
-    private boolean bPressed = false;
+    private final TetrisGame tetrisGame = new TetrisGame();
+    private TetrisBoard tetrisBoard;
+
     private BufferedImage image;
     private double speed = 1.0;
-    @WidgetPluginProperty(name="variable score", initValue = "tetris-score")
-    private String  variableScore = "tetris-score";
-    @WidgetPluginProperty(name="variable lines", initValue = "tetris-lines")
-    private String  variableLines = "tetris-lines";
-    @WidgetPluginProperty(name="variable status", initValue = "tetris-status")
-    private String  variableStatus = "tetris-status";
-    @WidgetPluginProperty(name="variable action", initValue = "tetris-action")
-    private String  variableAction = "tetris-action";
-    @WidgetPluginProperty(name="variable speed", initValue = "tetris-speed")
-    private String  variableSpeed = "tetris-speed";
+
+    @WidgetPluginProperty(name = "variable score", initValue = "tetris-score")
+    private String variableScoreName = "tetris-score";
+
+    @WidgetPluginProperty(name = "variable lines", initValue = "tetris-lines")
+    private String variableLinesName = "tetris-lines";
+
+    @WidgetPluginProperty(name = "variable status", initValue = "tetris-status")
+    private String variableStatusName = "tetris-status";
+
+    @WidgetPluginProperty(name = "variable action", initValue = "tetris-action")
+    private String variableActionName = "tetris-action";
+
+    @WidgetPluginProperty(name = "variable speed", initValue = "tetris-speed")
+    private String variableSpeedName = "tetris-speed";
+
+    private boolean updating = false;
+    private long lastKeyTime = 0;
 
     public WidgetGameTetris(final ActiveRegionContext region) {
         super(region);
 
-        if (!variableSpeed.isEmpty()) {
-            this.variableUpdated(variableSpeed, VariablesBlackboardContext.getInstance().getVariableValue(variableSpeed));
+        if (!variableSpeedName.isEmpty()) {
+            this.variableUpdated(variableSpeedName, VariablesBlackboardContext.getInstance().getVariableValue(variableSpeedName));
         }
         WidgetPlugin.setActiveWidget(this);
-        fGame.addBoardListener(this);
-        updateVariable(variableScore, "0");
-        updateVariable(variableLines, "0");
-        updateVariable(variableStatus, "not started");
-        updateVariable(variableAction, "");
-        updateVariable(variableSpeed, "" + speed);
-        fGame.addScoreListener(new ScoreListener() {
+        tetrisGame.addBoardListener(this);
+        updateVariable(variableScoreName, "0");
+        updateVariable(variableLinesName, "0");
+        updateVariable(variableStatusName, "not started");
+        updateVariable(variableActionName, "");
+        updateVariable(variableSpeedName, "" + speed);
+        tetrisGame.addScoreListener(new ScoreListener() {
 
             public void scoreChange(ScoreEvent e) {
                 updateVariable(getActiveRegionContext().getWidgetProperty("variable score"), (e.getScore() / 100) + "");
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable lines"), (fGame.getTotalLines()) + "");
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable lines"), (tetrisGame.getTotalLines()) + "");
             }
         });
     }
 
-    private TetrisBoard fBoard;
-
-    public boolean hasTextItems() {
-        return false;
-    }
-
-    private void updateVariable(String name, String value) {
-        if (!name.isEmpty() && !value.isEmpty()) {
-            VariablesBlackboardContext.getInstance().updateVariable(name, value);
-        }
-    }
-
+    @Override
     public void boardChange(BoardEvent e) {
-        fBoard = (TetrisBoard) e.getSource();
+        tetrisBoard = (TetrisBoard) e.getSource();
         repaint();
     }
 
@@ -86,14 +89,15 @@ public class WidgetGameTetris extends WidgetPlugin implements BoardListener {
         image = SketchletGraphicsContext.getInstance().createCompatibleImage(width, height, image);
         final Graphics2D gImage = image.createGraphics();
         gImage.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         // Draw the board pieces if board not null.
         if (this.getActiveRegionContext() != null) {
             final int numCols = 10;
             final int numRows = 20;
-            if (fBoard != null) {
+            if (tetrisBoard != null) {
                 for (int cols = 0; cols < numCols; cols++) {
                     for (int rows = 0; rows < numRows; rows++) {
-                        final int piece = fBoard.getPieceAt(cols, rows);
+                        final int piece = tetrisBoard.getPieceAt(cols, rows);
 
                         if (piece != TetrisBoard.EMPTY_BLOCK) {
                             gImage.setColor(getPieceColor(piece));
@@ -118,62 +122,99 @@ public class WidgetGameTetris extends WidgetPlugin implements BoardListener {
         g2.drawImage(image, 0, 0, width, height, null);
     }
 
-    private void drawBlock(Graphics g, int x, int y, int width, int height) {
-        g.fillRect(x, y, width, height);
-        g.setColor(Color.black);
-        g.drawRect(x, y, width, height);
-    }
-
     @Override
     public void variableUpdated(String triggerVariable, String value) {
         if (triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable status"))) {
             if (value.equalsIgnoreCase("play") || value.equalsIgnoreCase("start")) {
-                if (!fGame.isPlaying()) {
-                    fGame.startGame();
+                if (!tetrisGame.isPlaying()) {
+                    tetrisGame.startGame();
                 } else {
-                    if (fGame.isPaused()) {
-                        fGame.setPaused(false);
+                    if (tetrisGame.isPaused()) {
+                        tetrisGame.setPaused(false);
                     }
                 }
                 this.requestFocus();
             } else if (value.equalsIgnoreCase("stop")) {
-                if (fGame.isPlaying()) {
-                    fGame.stopGame();
+                if (tetrisGame.isPlaying()) {
+                    tetrisGame.stopGame();
                 }
             } else if (value.equalsIgnoreCase("pause")) {
-                fGame.setPaused(true);
+                tetrisGame.setPaused(true);
             }
         } else if (triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable lines"))) {
             try {
                 int lines = (int) Double.parseDouble(value);
-                fGame.setTotalLines(lines);
-                fGame.checkTotalLinesTarget();
+                tetrisGame.setTotalLines(lines);
+                tetrisGame.checkTotalLinesTarget();
             } catch (Exception e) {
             }
         } else if (triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable score"))) {
             try {
                 int score = (int) Double.parseDouble(value);
-                fGame.setScore(score * 100);
+                tetrisGame.setScore(score * 100);
             } catch (Exception e) {
             }
         } else if (triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable speed"))) {
             try {
                 speed = Double.parseDouble(value);
-                fGame.speed = speed;
+                tetrisGame.speed = speed;
             } catch (Exception e) {
             }
-        } else if (!bUpdating && triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable action"))) {
+        } else if (!updating && triggerVariable.equalsIgnoreCase(getActiveRegionContext().getWidgetProperty("variable action"))) {
             if (value.equalsIgnoreCase("left")) {
-                fGame.move(TetrisPiece.LEFT);
+                tetrisGame.move(TetrisPiece.LEFT);
             } else if (value.equalsIgnoreCase("right")) {
-                fGame.move(TetrisPiece.RIGHT);
+                tetrisGame.move(TetrisPiece.RIGHT);
             } else if (value.equalsIgnoreCase("rotate")) {
-                fGame.move(TetrisPiece.ROTATE);
+                tetrisGame.move(TetrisPiece.ROTATE);
             } else if (value.equalsIgnoreCase("down")) {
-                fGame.move(TetrisPiece.DOWN);
+                tetrisGame.move(TetrisPiece.DOWN);
             } else if (value.equalsIgnoreCase("fall")) {
-                fGame.move(TetrisPiece.FALL);
+                tetrisGame.move(TetrisPiece.FALL);
             }
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (!tetrisGame.isPlaying() && System.currentTimeMillis() - lastKeyTime > 3000) {
+            tetrisGame.startGame();
+            updateVariable(getActiveRegionContext().getWidgetProperty("variable status"), "play");
+        }
+        lastKeyTime = System.currentTimeMillis();
+        updating = true;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
+                tetrisGame.move(TetrisPiece.LEFT);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "left");
+                break;
+            case KeyEvent.VK_RIGHT:
+                tetrisGame.move(TetrisPiece.RIGHT);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "right");
+                break;
+            case KeyEvent.VK_UP:
+                tetrisGame.move(TetrisPiece.ROTATE);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "rotate");
+                break;
+            case KeyEvent.VK_DOWN:
+                tetrisGame.move(TetrisPiece.DOWN);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "down");
+                break;
+            case KeyEvent.VK_SHIFT:
+                tetrisGame.move(TetrisPiece.FALL);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "fall");
+                break;
+            case KeyEvent.VK_SPACE:
+                tetrisGame.move(TetrisPiece.FALL);
+                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "fall");
+                break;
+        }
+        updating = false;
+    }
+
+    private void updateVariable(String name, String value) {
+        if (!name.isEmpty() && !value.isEmpty()) {
+            VariablesBlackboardContext.getInstance().updateVariable(name, value);
         }
     }
 
@@ -205,56 +246,11 @@ public class WidgetGameTetris extends WidgetPlugin implements BoardListener {
         }
 
         return result;
-
     }
 
-    @Override
-    public void mousePressed(MouseEvent me) {
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent me) {
-        repaint();
-    }
-
-    private boolean bUpdating = false;
-    private long lastKeyTime = 0;
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (!fGame.isPlaying() && System.currentTimeMillis() - lastKeyTime > 3000) {
-            fGame.startGame();
-            updateVariable(getActiveRegionContext().getWidgetProperty("variable status"), "play");
-        }
-        lastKeyTime = System.currentTimeMillis();
-        bUpdating = true;
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                fGame.move(TetrisPiece.LEFT);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "left");
-                break;
-            case KeyEvent.VK_RIGHT:
-                fGame.move(TetrisPiece.RIGHT);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "right");
-                break;
-            case KeyEvent.VK_UP:
-                fGame.move(TetrisPiece.ROTATE);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "rotate");
-                break;
-            case KeyEvent.VK_DOWN:
-                fGame.move(TetrisPiece.DOWN);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "down");
-                break;
-            case KeyEvent.VK_SHIFT:
-                fGame.move(TetrisPiece.FALL);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "fall");
-                break;
-            case KeyEvent.VK_SPACE:
-                fGame.move(TetrisPiece.FALL);
-                updateVariable(getActiveRegionContext().getWidgetProperty("variable action"), "fall");
-                break;
-        }
-        bUpdating = false;
+    private void drawBlock(Graphics g, int x, int y, int width, int height) {
+        g.fillRect(x, y, width, height);
+        g.setColor(Color.black);
+        g.drawRect(x, y, width, height);
     }
 }

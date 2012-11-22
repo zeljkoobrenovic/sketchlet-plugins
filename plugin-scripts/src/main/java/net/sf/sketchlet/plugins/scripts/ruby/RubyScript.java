@@ -7,7 +7,6 @@ package net.sf.sketchlet.plugins.scripts.ruby;
 import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.script.ScriptPluginProxy;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.io.FileReader;
@@ -18,18 +17,16 @@ import java.io.FileReader;
 @PluginInfo(name = "Ruby", type = "script", properties = {"extension=rb"})
 public class RubyScript extends ScriptPluginProxy {
 
-    ScriptEngineManager mgr;
-    Invocable invocableEngine;
+    private ScriptEngineManager mgr;
 
     public RubyScript(File scriptFile) {
         super(scriptFile);
         mgr = new ScriptEngineManager();
-        engine = mgr.getEngineByName("ruby");
+        setEngine(mgr.getEngineByName("ruby"));
     }
 
     public void loadScript(FileReader scriptFile) throws Exception {
-        setContext(engine);
-        engine.eval(scriptFile);
-        this.invocableEngine = (Invocable) engine;
+        setContext(getEngine());
+        getEngine().eval(scriptFile);
     }
 }

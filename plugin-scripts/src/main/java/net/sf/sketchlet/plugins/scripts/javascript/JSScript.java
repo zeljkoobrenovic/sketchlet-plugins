@@ -20,17 +20,18 @@ import java.io.FileReader;
 @PluginInfo(name = "Javascript", type = "script", properties = {"extension=js"})
 public class JSScript extends ScriptPluginProxy {
 
-    ScriptEngineManager mgr;
-    Invocable invocableEngine;
+    private ScriptEngineManager mgr;
+    private Invocable invocableEngine;
 
     public JSScript(File scriptFile) {
         super(scriptFile);
         mgr = new ScriptEngineManager();
-        engine = mgr.getEngineByName("JavaScript");
+        setEngine(mgr.getEngineByName("JavaScript"));
     }
 
+    @Override
     public void loadScript(FileReader scriptFile) throws Exception {
-        setContext(engine);
+        setContext(getEngine());
 
         String code = "";
         BufferedReader reader = new BufferedReader(scriptFile);
@@ -39,10 +40,11 @@ public class JSScript extends ScriptPluginProxy {
             code += line + "\n";
         }
         code = VariablesBlackboardContext.getInstance().populateTemplate(code);
-        engine.eval(code);
-        this.invocableEngine = (Invocable) engine;
+        getEngine().eval(code);
+        this.invocableEngine = (Invocable) getEngine();
     }
 
+    @Override
     public void callScript(Object sender, String triggerVariable, String value, String oldValue) throws Exception {
         this.invocableEngine.invokeFunction("variableUpdated", triggerVariable, value);
     }

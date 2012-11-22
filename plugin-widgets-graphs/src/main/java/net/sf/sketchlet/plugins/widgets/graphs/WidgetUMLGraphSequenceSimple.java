@@ -21,44 +21,41 @@ import java.util.List;
 import java.util.Random;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "UMLGraph / Sequence Diagram / Simple DSL", type = "widget", group="UML", position = 270)
+@PluginInfo(name = "UMLGraph / Sequence Diagram / Simple DSL", type = "widget", group = "UML", position = 270)
 @WidgetPluginTextItems(initValue = "S,\"s:Switch\"" + "\n"
-+ "P,\"p:Pump\"" + "\n"
-+ "|\n"
-+ "S [\n"
-+ "  P [\n"
-+ "    S => P, \"run()\"\n"
-+ "    S => P, \"stop()\"\n"
-+ "    |\n"
-+ "  ] P\n"
-+ "] S")
+        + "P,\"p:Pump\"" + "\n"
+        + "|\n"
+        + "S [\n"
+        + "  P [\n"
+        + "    S => P, \"run()\"\n"
+        + "    S => P, \"stop()\"\n"
+        + "    |\n"
+        + "  ] P\n"
+        + "] S")
 @WidgetPluginLinks(links = {
-    "DSL for UMLGraph Sequence Diagram; http://macroexpand.org/doku.php?id=articles:uml-sequence-diagram-dsl-txl:start"
+        "DSL for UMLGraph Sequence Diagram; http://macroexpand.org/doku.php?id=articles:uml-sequence-diagram-dsl-txl:start"
 })
 public class WidgetUMLGraphSequenceSimple extends WidgetPic2Plot {
 
-    //
-    @WidgetPluginProperty(name = "scale", initValue = "1.34",
-    description = "Internal image scaling")
+    @WidgetPluginProperty(name = "scale", initValue = "1.34", description = "Internal image scaling")
     private double thisScale = 1.34;
-    //
-    @WidgetPluginProperty(name = "pic2plot parameters", initValue = "",
-    description = "Additional parameters to be sent to the plotutils program")
+
+    @WidgetPluginProperty(name = "pic2plot parameters", initValue = "", description = "Additional parameters to be sent to the plotutils program")
     private String thisCmdLineParams = "";
+
+    private Random generator = new Random();
+    private String strResult = "";
 
     public WidgetUMLGraphSequenceSimple(ActiveRegionContext region) {
         super(region);
     }
-    private Random generator = new Random();
-    private String strResult = "";
 
     @Override
     protected String getPicText() {
-        super.cmdLineParams = this.thisCmdLineParams;
-        super.scale = this.thisScale;
+        super.setCmdLineParams(this.thisCmdLineParams);
+        super.setScale(this.thisScale);
 
         File tempDir = new File(SketchletContextUtils.getCurrentProjectDir() + "temp/umlgraphseqdsl" + generator.nextInt());
         try {

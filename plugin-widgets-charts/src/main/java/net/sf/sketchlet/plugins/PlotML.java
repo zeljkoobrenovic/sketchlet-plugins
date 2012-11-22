@@ -16,11 +16,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Ptplot", type="widget", group = "Graphs")
-@WidgetPluginTextItems(initValue="TitleText: Software Downloads\n" +
+@PluginInfo(name = "Ptplot", type = "widget", group = "Graphs")
+@WidgetPluginTextItems(initValue = "TitleText: Software Downloads\n" +
         "XRange: 0,10\n" +
         "YRange: 0,10000\n" +
         "# Manually specify X ticks\n" +
@@ -76,7 +75,7 @@ import java.awt.image.BufferedImage;
 @WidgetPluginLinks(link = "http://ptolemy.berkeley.edu/java/ptplot/")
 public class PlotML extends ImageCachingWidgetPlugin {
 
-    String strLastChart = "";
+    private String prevCacheKey = "";
 
     public PlotML(ActiveRegionContext region) {
         super(region);
@@ -90,30 +89,29 @@ public class PlotML extends ImageCachingWidgetPlugin {
             try {
                 chartSpec = VariablesBlackboardContext.getInstance().populateTemplate(chartSpec);
 
-                int x = 0;
-                int y = 0;
                 int w = getActiveRegionContext().getWidth();
                 int h = getActiveRegionContext().getHeight();
 
                 BufferedImage image = PlotApplication.getImage(chartSpec, w, h);
                 if (image != null) {
-                     g2.drawImage(image, 0, 0, null);
+                    g2.drawImage(image, 0, 0, null);
                 }
             } catch (Exception e) {
             }
         }
     }
-    private String strPrevInfo = "";
 
     @Override
     public boolean isRegionChanged() {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        strText = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        widgetItemText = VariablesBlackboardContext.getInstance().populateTemplate(widgetItemText.trim());
         int w = getActiveRegionContext().getWidth();
         int h = getActiveRegionContext().getHeight();
-        strText += ";" + w + ";" + h;
-        if (!strText.equals(strPrevInfo)) {
-            strPrevInfo = strText;
+
+        widgetItemText += ";" + w + ";" + h;
+
+        if (!widgetItemText.equals(prevCacheKey)) {
+            prevCacheKey = widgetItemText;
             return true;
         }
         return super.isRegionChanged();

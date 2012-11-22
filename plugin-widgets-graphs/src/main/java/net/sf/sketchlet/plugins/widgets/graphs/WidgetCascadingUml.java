@@ -11,39 +11,39 @@ import net.sf.sketchlet.plugin.WidgetPluginProperty;
 import net.sf.sketchlet.plugin.WidgetPluginTextItems;
 import net.sf.sketchlet.uml.CascadingUmlUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zobrenovic
  */
-@PluginInfo(name = "Cascading UML", type = "widget", group="UML", position = 251)
+@PluginInfo(name = "Cascading UML", type = "widget", group = "UML", position = 251)
 @WidgetPluginTextItems(initValue = "A <stereotype1>: Super\n"
         + "B <stereotype2>: Super\n"
         + "Super:\n"
         + "  fields: s1, s2, s3\n"
         + "  operations: op1(), void op2(), int op3(int p)")
 public class WidgetCascadingUml extends WidgetUMLGraph implements ScriptPluginAutoCompletion {
-    //
+    @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2", "-Grankdir=LR", "-Grankdir=TB"})
+    private String cmdLineParams = "";
 
-    @WidgetPluginProperty(name = "dot parameters", initValue = "",
-            description = "Additional parameters to be sent to the dot program",
-            valueList = {"-Gratio=0.7 -Eminlen=2", "-Grankdir=LR", "-Grankdir=TB"})
-    protected String cmdLineParams = "";
-    //
     @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size")
-    protected boolean resizeRegion = true;
-    //
-    @WidgetPluginProperty(name = "style", initValue = "normal", description = "Visual style",
-            valueList = {"normal", "sketchy"})
-    protected String style = "normal";
+    private boolean resizeRegionEnabled = true;
+
+    @WidgetPluginProperty(name = "style", initValue = "normal", description = "Visual style", valueList = {"normal", "sketchy"})
+    private String style = "normal";
 
     public WidgetCascadingUml(ActiveRegionContext region) {
         super(region);
     }
 
+    @Override
     protected String getText() {
-        super.cmdLineParams = this.cmdLineParams;
-        super.resizeRegion = this.resizeRegion;
+        super.setCmdLineParams(this.cmdLineParams);
+        super.setResizingRegion(this.resizeRegionEnabled);
         return getActiveRegionContext().getWidgetItemText();
     }
 
@@ -63,14 +63,11 @@ public class WidgetCascadingUml extends WidgetUMLGraph implements ScriptPluginAu
         return new CascadingUmlUtil().getUmlGraphCode(text);
     }
 
-    protected String code = "";
-    String prevText = "";
-
     @Override
     public Map<String, List<String>> getAutoCompletionPairs() {
         Map<String, List<String>> map = new HashMap<String, List<String>>();
 
-        CascadingUmlUtil cuml =  new CascadingUmlUtil();
+        CascadingUmlUtil cuml = new CascadingUmlUtil();
         cuml.getUmlGraphCode(this.getText());
         List<String> allNodes = cuml.getAllNodes();
         List<String> allStereotypes = cuml.getAllStereotypes();
@@ -196,7 +193,7 @@ public class WidgetCascadingUml extends WidgetUMLGraph implements ScriptPluginAu
         map.put("color:", Arrays.asList(svgColors));
         map.put("color: ", Arrays.asList(svgColors));
 
-        String cardinalities[] = new String[] {"[* - *]", "[end1 name end2]", "[end1 \"complex name\" end2]", "[1 - 1]", "[1 - *]", "[* - 1]", "[1..* - *]", "[* - 1..*]", "[0..1 - 1]"};
+        String cardinalities[] = new String[]{"[* - *]", "[end1 name end2]", "[end1 \"complex name\" end2]", "[1 - 1]", "[1 - *]", "[* - 1]", "[1..* - *]", "[* - 1..*]", "[0..1 - 1]"};
         map.put("[", Arrays.asList(cardinalities));
 
         return map;

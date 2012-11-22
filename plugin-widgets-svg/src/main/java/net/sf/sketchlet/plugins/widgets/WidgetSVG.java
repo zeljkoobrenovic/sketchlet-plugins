@@ -11,10 +11,7 @@ import net.sf.sketchlet.plugin.ImageCachingWidgetPlugin;
 import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginTextItems;
-import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.ImageTranscoder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,19 +20,17 @@ import java.io.StringReader;
 /**
  * @author zobrenovic
  */
-@PluginInfo(name = "SVG Renderer", type = "widget", group="HTML, SVG")
+@PluginInfo(name = "SVG Renderer", type = "widget", group = "HTML, SVG")
 @WidgetPluginTextItems(initValue = "<?xml version=\"1.0\" standalone=\"no\"?>\n"
         + "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n"
         + "<svg width=\"100%\" height=\"100%\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n"
         + "<rect x=\"20\" y=\"20\" rx=\"20\" ry=\"20\" width=\"250\" height=\"100\"\n"
         + "style=\"fill:red;stroke:black;stroke-width:5;opacity:0.5\"/>\n"
         + "</svg>")
-@WidgetPluginLinks(links = {
-        "SVG Tutorial; http://www.w3schools.com/svg/"
-})
+@WidgetPluginLinks(links = {"SVG Tutorial; http://www.w3schools.com/svg/"})
 public class WidgetSVG extends ImageCachingWidgetPlugin {
 
-    private String strPrevInfo = "";
+    private String prevCacheKey = "";
 
     public WidgetSVG(ActiveRegionContext region) {
         super(region);
@@ -61,6 +56,17 @@ public class WidgetSVG extends ImageCachingWidgetPlugin {
 
             g2.drawImage(image, x1, y1, w, h, null, null);
         }
+    }
+
+    @Override
+    public boolean isRegionChanged() {
+        String strText = getActiveRegionContext().getWidgetItemText();
+        strText = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
+        if (!strText.equals(prevCacheKey)) {
+            prevCacheKey = strText;
+            return true;
+        }
+        return super.isRegionChanged();
     }
 
     private BufferedImage getImage(String strSVG, int w, int h, BufferedImage oldImage) {
@@ -90,38 +96,5 @@ public class WidgetSVG extends ImageCachingWidgetPlugin {
 
         return img;
     }
-
-    @Override
-    public boolean isRegionChanged() {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        strText = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
-        if (!strText.equals(strPrevInfo)) {
-            strPrevInfo = strText;
-            return true;
-        }
-        return super.isRegionChanged();
-    }
 }
 
-class BufferedImageTranscoder extends ImageTranscoder {
-
-    private BufferedImage image;
-
-    public BufferedImageTranscoder(int width, int height) {
-        this.setImageSize(width, height);
-    }
-
-    @Override
-    public BufferedImage createImage(int width, int height) {
-        return SketchletGraphicsContext.getInstance().createCompatibleImage(width, height);
-    }
-
-    @Override
-    public void writeImage(BufferedImage image, TranscoderOutput output) throws TranscoderException {
-        this.image = image;
-    }
-
-    public BufferedImage getImage() {
-        return image;
-    }
-}

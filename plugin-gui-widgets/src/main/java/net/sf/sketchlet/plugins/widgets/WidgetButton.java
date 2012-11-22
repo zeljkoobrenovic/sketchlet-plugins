@@ -40,7 +40,7 @@ public class WidgetButton extends WidgetPlugin {
     @WidgetPluginProperty(name = "caption", initValue = "Button", description = "A caption of the button")
     private String caption = "";
     //
-    private boolean bPressed = false;
+    private boolean pressed = false;
 
     public WidgetButton(final ActiveRegionContext region) {
         super(region);
@@ -57,7 +57,7 @@ public class WidgetButton extends WidgetPlugin {
         Color c = getActiveRegionContext().getLineColor();
 
 
-        if (bPressed) {
+        if (pressed) {
             g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 5));
             g2.fillRect(x, y, w, h);
         }
@@ -68,26 +68,26 @@ public class WidgetButton extends WidgetPlugin {
         FontRenderContext frc = g2.getFontRenderContext();
         Font font = g2.getFont();
 
-        String strText = caption;
-        LineMetrics metrics = font.getLineMetrics(strText, frc);
+        String text = caption;
+        LineMetrics metrics = font.getLineMetrics(text, frc);
 
-        String original = strText;
-        float textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+        String original = text;
+        float textWidth = (float) font.getStringBounds(text, frc).getMaxX();
 
         while (textWidth > w && original.length() > 0) {
             original = original.substring(0, original.length() - 1);
-            strText = original + "..";
-            textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+            text = original + "..";
+            textWidth = (float) font.getStringBounds(text, frc).getMaxX();
         }
 
-        g2.drawString(strText, x + w / 2 - textWidth / 2, y + metrics.getHeight());
+        g2.drawString(text, x + w / 2 - textWidth / 2, y + metrics.getHeight());
 
 
     }
 
     @Override
     public void mousePressed(MouseEvent me) {
-        bPressed = true;
+        pressed = true;
         this.updateSketchletVariable(updateVariable, valueOnPressed);
         this.getActiveRegionContext().processEvent(EVENT_PRESS);
         repaint();
@@ -95,7 +95,7 @@ public class WidgetButton extends WidgetPlugin {
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        bPressed = false;
+        pressed = false;
         this.updateSketchletVariable(updateVariable, valueOnReleased);
         this.getActiveRegionContext().processEvent(EVENT_RELEASE);
         this.getActiveRegionContext().processEvent(EVENT_CLICK);
@@ -105,7 +105,7 @@ public class WidgetButton extends WidgetPlugin {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            this.bPressed = true;
+            this.pressed = true;
             this.getActiveRegionContext().processEvent(EVENT_PRESS);
         }
     }
@@ -113,7 +113,7 @@ public class WidgetButton extends WidgetPlugin {
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            this.bPressed = false;
+            this.pressed = false;
             this.getActiveRegionContext().processEvent("released");
             this.getActiveRegionContext().processEvent(EVENT_CLICK);
         }

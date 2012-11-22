@@ -7,7 +7,6 @@ package net.sf.sketchlet.plugins.scripts.beanshell;
 import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.script.ScriptPluginProxy;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.io.FileReader;
@@ -18,18 +17,17 @@ import java.io.FileReader;
 @PluginInfo(name = "Bean Shell", type = "script", properties = {"extension=bsh"})
 public class BeanShellScript extends ScriptPluginProxy {
 
-    ScriptEngineManager mgr;
-    Invocable invocableEngine;
+    private ScriptEngineManager mgr;
 
     public BeanShellScript(File scriptFile) {
         super(scriptFile);
         mgr = new ScriptEngineManager();
-        engine = mgr.getEngineByName("bsh");
+        setEngine(mgr.getEngineByName("bsh"));
     }
 
+    @Override
     public void loadScript(FileReader scriptFile) throws Exception {
-        setContext(engine);
-        engine.eval(scriptFile);
-        // this.invocableEngine = (Invocable) bshEngine;
+        setContext(getEngine());
+        getEngine().eval(scriptFile);
     }
 }

@@ -12,7 +12,6 @@ import net.sf.sketchlet.plugin.WidgetPluginProperties;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 
@@ -24,14 +23,17 @@ import java.awt.font.LineMetrics;
 @WidgetPluginProperties(properties = {
     "update variable|textfield|[in/out] A variable updated"})
 public class WidgetTextField extends WidgetPlugin {
+    public static final String UPDATE_VARIABLE_PROPERTY = "update variable";
 
-    String strValue = "";
+    private String value = "";
+    private long lastTime = System.currentTimeMillis();
+    private boolean drawTickEnabled = true;
 
     public WidgetTextField(final ActiveRegionContext region) {
         super(region);
-        String strControlVariable = getActiveRegionContext().getWidgetProperty("update variable");
-        if (!strControlVariable.isEmpty()) {
-            this.variableUpdated(strControlVariable, VariablesBlackboardContext.getInstance().getVariableValue(strControlVariable));
+        String updateVariableName = getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY);
+        if (!updateVariableName.isEmpty()) {
+            this.variableUpdated(updateVariableName, VariablesBlackboardContext.getInstance().getVariableValue(updateVariableName));
         }
         setActiveWidget(this);
     }
@@ -57,14 +59,13 @@ public class WidgetTextField extends WidgetPlugin {
         FontRenderContext frc = g2.getFontRenderContext();
         Font font = g2.getFont();
 
-        LineMetrics metrics = font.getLineMetrics(strValue, frc);
+        LineMetrics metrics = font.getLineMetrics(value, frc);
 
-        FontMetrics fm = g2.getFontMetrics();
-        float textWidth = (float) font.getStringBounds(strValue, frc).getMaxX();
+        float textWidth = (float) font.getStringBounds(value, frc).getMaxX();
         if (textWidth > w - 5) {
-            g2.drawString(strValue, x + w - textWidth, y + metrics.getHeight());
+            g2.drawString(value, x + w - textWidth, y + metrics.getHeight());
         } else {
-            g2.drawString(strValue, x + 4, y + metrics.getHeight());
+            g2.drawString(value, x + 4, y + metrics.getHeight());
         }
 
         drawTick(g2, x, y, w, h, (int) textWidth);
@@ -72,7 +73,7 @@ public class WidgetTextField extends WidgetPlugin {
 
     private void drawTick(Graphics2D g2, int x, int y, int w, int h, int textWidth) {
         if (hasFocus()) {
-            if (bDrawTick) {
+            if (drawTickEnabled) {
                 if (textWidth > w - 5) {
                     g2.drawLine(x + w - 3, y + 2, x + w - 3, y + h - 4);
                 } else {
@@ -82,7 +83,7 @@ public class WidgetTextField extends WidgetPlugin {
 
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
-                bDrawTick = !bDrawTick;
+                drawTickEnabled = !drawTickEnabled;
             }
 
             java.awt.EventQueue.invokeLater(new Runnable() {
@@ -97,33 +98,17 @@ public class WidgetTextField extends WidgetPlugin {
             });
         }
     }
-    private long lastTime = System.currentTimeMillis();
-    private boolean bDrawTick = true;
-
-    @Override
-    public void mousePressed(MouseEvent me) {
-        repaint();
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent me) {
-        repaint();
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            if (strValue.length() > 0) {
-                strValue = strValue.substring(0, strValue.length() - 1);
+            if (value.length() > 0) {
+                value = value.substring(0, value.length() - 1);
                 updateVariable();
             }
         } else {
             if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-                strValue += e.getKeyChar();
+                value += e.getKeyChar();
                 updateVariable();
             }
         }
@@ -132,15 +117,15 @@ public class WidgetTextField extends WidgetPlugin {
 
     @Override
     public void variableUpdated(String triggerVariable, String value) {
-        if (getActiveRegionContext().getWidgetProperty("update variable").equalsIgnoreCase(triggerVariable)) {
-            strValue = value;
+        if (getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).equalsIgnoreCase(triggerVariable)) {
+            this.value = value;
             repaint();
         }
     }
 
-    public void updateVariable() {
-        if (!getActiveRegionContext().getWidgetProperty("update variable").isEmpty()) {
-            VariablesBlackboardContext.getInstance().updateVariableIfDifferent(getActiveRegionContext().getWidgetProperty("update variable"), strValue);
+    private void updateVariable() {
+        if (!getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY).isEmpty()) {
+            VariablesBlackboardContext.getInstance().updateVariableIfDifferent(getActiveRegionContext().getWidgetProperty(UPDATE_VARIABLE_PROPERTY), value);
         }
     }
 }

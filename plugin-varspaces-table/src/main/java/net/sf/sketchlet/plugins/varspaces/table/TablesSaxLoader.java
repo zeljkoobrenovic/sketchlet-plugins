@@ -4,22 +4,28 @@
  */
 package net.sf.sketchlet.plugins.varspaces.table;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Vector;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author zobrenovic
  */
 public class TablesSaxLoader extends DefaultHandler {
 
-    TableVariableSpace tables;
+    private String currentElement;
+    private Table table = null;
+    private TableColumn column = null;
+    private List<String> rowData = null;
+    private TableVariableSpace tables;
+    private String characters = "";
 
     public TablesSaxLoader(TableVariableSpace tables) {
         super();
@@ -40,10 +46,6 @@ public class TablesSaxLoader extends DefaultHandler {
             e.printStackTrace();
         }
     }
-    String currentElement;
-    Table table = null;
-    TableColumn column = null;
-    Vector<String> rowData = null;
 
     public void startDocument() {
     }
@@ -54,40 +56,36 @@ public class TablesSaxLoader extends DefaultHandler {
     public void startElement(String uri, String name, String qName, Attributes atts) {
         String strElem = "";
         if ("".equals(uri)) {
-            // System.out.println("Start element: " + qName);
             strElem = qName;
         } else {
-            // System.out.println("Start element: {" + uri + "}" + name);
             strElem = name;
         }
 
         this.currentElement = strElem;
-        this.strCharacters = "";
+        this.characters = "";
 
         if (strElem.equalsIgnoreCase("table")) {
             this.table = new Table();
         } else if (strElem.equalsIgnoreCase("column")) {
             this.column = new TableColumn();
             String str = atts.getValue("name");
-            this.column.name = str != null ? str : "";
+            this.column.setName(str != null ? str : "");
             str = atts.getValue("type");
-            this.column.type = str != null ? str : "";
+            this.column.setType(str != null ? str : "");
             str = atts.getValue("defaultValue");
-            this.column.defaultValue = str != null ? str : "";
-            this.table.columns.add(column);
+            this.column.setDefaultValue(str != null ? str : "");
+            this.table.getColumns().add(column);
         } else if (strElem.equalsIgnoreCase("row")) {
-            this.rowData = new Vector<String>();
-            this.table.data.add(rowData);
+            this.rowData = new ArrayList<String>();
+            this.table.getData().add(rowData);
         }
     }
 
     public void endElement(String uri, String name, String qName) {
         String strElem = "";
         if ("".equals(uri)) {
-            // System.out.println("End element: " + qName);
             strElem = qName;
         } else {
-            // System.out.println("End element:   {" + uri + "}" + name);
             strElem = name;
         }
 
@@ -103,29 +101,28 @@ public class TablesSaxLoader extends DefaultHandler {
             this.rowData = null;
         }
     }
-    String strCharacters = "";
 
     public void characters(char ch[], int start, int length) {
         if (currentElement != null) {
             String strValue = new String(ch, start, length);
-            strCharacters += strValue;
+            characters += strValue;
         }
     }
 
-    public void processCharacters() {
-        strCharacters = strCharacters.replace("\\n", "\n");
-        strCharacters = strCharacters.replace("\\r", "\r");
-        strCharacters = strCharacters.replace("&lt;", "<");
-        strCharacters = strCharacters.replace("&gt;", ">");
-        strCharacters = strCharacters.replace("&amp;", "&");
+    private void processCharacters() {
+        characters = characters.replace("\\n", "\n");
+        characters = characters.replace("\\r", "\r");
+        characters = characters.replace("&lt;", "<");
+        characters = characters.replace("&gt;", ">");
+        characters = characters.replace("&amp;", "&");
         if (currentElement == null) {
             return;
         }
         if (currentElement.equalsIgnoreCase("name")) {
-            table.name = strCharacters;
+            table.setName(characters);
         }
         if (currentElement.equalsIgnoreCase("col") && rowData != null) {
-            rowData.add(strCharacters);
+            rowData.add(characters);
         }
     }
 }

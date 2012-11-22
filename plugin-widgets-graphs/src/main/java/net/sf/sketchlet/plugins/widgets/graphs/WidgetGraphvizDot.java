@@ -20,30 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Graphviz dot", type = "widget", group="Graphs", position = 252)
+@PluginInfo(name = "Graphviz dot", type = "widget", group = "Graphs", position = 252)
 @WidgetPluginTextItems(initValue = "digraph G {\n    main -> parse -> execute;\n    main -> init;\n    main -> cleanup;\n    execute -> make_string;\n    execute -> printf;\n    init -> make_string;\n    main -> printf;\n    execute -> compare;\n    }")
 @WidgetPluginLinks(link = "http://www.graphviz.org/Documentation.php")
-public class WidgetGraphvizDot extends ExternalImageProgramCallerWidget {
-    //
-    @WidgetPluginProperty(name = "dot parameters", initValue = "",
-    description = "Additional parameters to be sent to the dot program",
-    valueList = {"-Gratio=0.7 -Eminlen=2"})
-    protected String cmdLineParams = "";
-    //
-    @WidgetPluginProperty(name = "resize region", initValue = "true",
-    description = "Resize the region to fit the generated image size",
-    valueList = {"true", "false"})
-    protected boolean resizeRegion = true;
+public class WidgetGraphvizDot extends ExternalImageProgramGeneratorWidget {
+
+    @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2"})
+    private String cmdLineParams = "";
+
+    @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size", valueList = {"true", "false"})
+    private boolean resizeRegionEnabled = true;
 
     public WidgetGraphvizDot(ActiveRegionContext region) {
         super(region);
-    }
-
-    protected String prepareDot(String text) {
-        return text;
     }
 
     @Override
@@ -61,7 +52,7 @@ public class WidgetGraphvizDot extends ExternalImageProgramCallerWidget {
 
             dotParams.add(ExternalPrograms.getGraphVizDotPath());
             dotParams.add("-Tpng");
-            String strDotParams = cmdLineParams;
+            String strDotParams = getCmdLineParams();
             String params[] = strDotParams.split(" ");
             for (String param : params) {
                 dotParams.add(param);
@@ -80,22 +71,22 @@ public class WidgetGraphvizDot extends ExternalImageProgramCallerWidget {
                 BufferedImage image = ImageIO.read(imgFile);
                 if (image != null) {
                     this.setImage(image);
-                    if (resizeRegion && this.getActiveRegionContext() != null) {
+                    if (isResizeRegionEnabled() && this.getActiveRegionContext() != null) {
                         this.getActiveRegionContext().setProperty("width", "" + image.getWidth());
                         this.getActiveRegionContext().setProperty("height", "" + image.getHeight());
-                        bScale = false;
+                        setScaling(false);
                     } else {
-                        bScale = true;
+                        setScaling(true);
                     }
                 }
-                timeout = false;
+                setTimeout(false);
             } else {
                 SketchletPluginLogger.error("Could not generate Graphwiz DOT image.");
-                timeout = true;
+                setTimeout(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            timeout = true;
+            setTimeout(true);
         } finally {
             if (dotFile != null) {
                 dotFile.delete();
@@ -103,7 +94,27 @@ public class WidgetGraphvizDot extends ExternalImageProgramCallerWidget {
             if (imgFile != null) {
                 imgFile.delete();
             }
-            creating = false;
+            setResizeRegionEnabled(false);
         }
+    }
+
+    protected String prepareDot(String text) {
+        return text;
+    }
+
+    public String getCmdLineParams() {
+        return cmdLineParams;
+    }
+
+    public void setCmdLineParams(String cmdLineParams) {
+        this.cmdLineParams = cmdLineParams;
+    }
+
+    public boolean isResizeRegionEnabled() {
+        return resizeRegionEnabled;
+    }
+
+    public void setResizeRegionEnabled(boolean resizeRegionEnabled) {
+        this.resizeRegionEnabled = resizeRegionEnabled;
     }
 }

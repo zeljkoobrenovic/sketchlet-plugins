@@ -25,7 +25,8 @@ import java.awt.image.BufferedImage;
 @WidgetPluginProperties(properties = {"default font|Bradley Hand ITC|Default text font"})
 public class WidgetHTML extends ImageCachingWidgetPlugin {
 
-    private String strPrevInfo = "";
+    public static final String DEFAULT_FONT_PROPERTY = "default font";
+    private String prevInfo = "";
 
     public WidgetHTML(ActiveRegionContext regionContext) {
         super(regionContext);
@@ -33,43 +34,43 @@ public class WidgetHTML extends ImageCachingWidgetPlugin {
 
     @Override
     public void paintImage(Graphics2D g2) {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        if (strText.isEmpty()) {
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        if (widgetItemText.isEmpty()) {
             return;
         }
-        String strHtml = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
-        String strFont = getActiveRegionContext().getWidgetProperty("default font");
-        if (strFont != null && !strFont.isEmpty()) {
-            strHtml = "<div style=\"font-family:" + strFont + "\">" + strHtml + "</div>";
+        String htmlContent = VariablesBlackboardContext.getInstance().populateTemplate(widgetItemText.trim());
+        String fontName = getActiveRegionContext().getWidgetProperty(DEFAULT_FONT_PROPERTY);
+        if (fontName != null && !fontName.isEmpty()) {
+            htmlContent = "<div style=\"font-family:" + fontName + "\">" + htmlContent + "</div>";
         }
-        if (strHtml.length() > 0) {
+        if (htmlContent.length() > 0) {
             int x1 = 0;
             int y1 = 0;
             int w = getActiveRegionContext().getWidth();
             int h = getActiveRegionContext().getHeight();
 
-            BufferedImage image = getHTMLImage(strHtml, w, h);
+            BufferedImage image = getHTMLImage(htmlContent, w, h);
             g2.drawImage(image, x1, y1, w, h, null, null);
         }
     }
 
     @Override
     public boolean isRegionChanged() {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String strHtml = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
-        String strFont = getActiveRegionContext().getWidgetProperty("default font");
-        String strInfo = strHtml + strFont;
-        if (!strInfo.equals(strPrevInfo)) {
-            strPrevInfo = strInfo;
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String htmlContent = VariablesBlackboardContext.getInstance().populateTemplate(widgetItemText.trim());
+        String font = getActiveRegionContext().getWidgetProperty(DEFAULT_FONT_PROPERTY);
+        String cacheKey = htmlContent + font;
+        if (!cacheKey.equals(prevInfo)) {
+            prevInfo = cacheKey;
             return true;
         }
         return super.isRegionChanged();
     }
 
-    private BufferedImage getHTMLImage(String strHTML, int w, int h) {
+    private BufferedImage getHTMLImage(String htmlContent, int w, int h) {
         BufferedImage image = null;
         try {
-            image = HTMLImageRenderer.getImage(strHTML, w, h);
+            image = HTMLImageRenderer.getImage(htmlContent, w, h);
         } catch (Throwable e) {
             image = SketchletGraphicsContext.getInstance().createCompatibleImage(w, h, image);
             Graphics2D g2 = image.createGraphics();

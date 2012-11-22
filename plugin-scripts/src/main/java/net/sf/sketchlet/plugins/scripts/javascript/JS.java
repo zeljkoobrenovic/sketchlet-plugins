@@ -7,7 +7,6 @@ package net.sf.sketchlet.plugins.scripts.javascript;
 import net.sf.sketchlet.context.SketchletContext;
 import net.sf.sketchlet.script.ScriptConsole;
 
-import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -16,9 +15,8 @@ import javax.script.ScriptEngineManager;
  */
 public class JS {
 
-    static ScriptEngineManager mgr = new ScriptEngineManager(SketchletContext.getInstance().getPluginClassLoader());
-    static ScriptEngine jsEngine = mgr.getEngineByName("JavaScript");
-    static Invocable invocableEngine = (Invocable) jsEngine;
+    private static ScriptEngineManager mgr = new ScriptEngineManager(SketchletContext.getInstance().getPluginClassLoader());
+    private static ScriptEngine jsEngine = mgr.getEngineByName("JavaScript");
 
     public static Object eval(String expression) {
         try {

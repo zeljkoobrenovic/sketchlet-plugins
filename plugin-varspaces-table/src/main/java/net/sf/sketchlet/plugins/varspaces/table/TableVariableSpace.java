@@ -15,25 +15,24 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name="table", type="varspace")
+@PluginInfo(name = "table", type = "varspace")
 public class TableVariableSpace extends AbstractPlugin implements VariableSpacePlugin {
 
-    public Hashtable<String, Table> tables = new Hashtable<String, Table>();
-    public Vector<Table> tablesVector = new Vector<Table>();
-    // public Hashtable<String, Info> infoCache = new Hashtable<String, Info>();
+    private Map<String, Table> tables = new HashMap<String, Table>();
+    private List<Table> tablesVector = new ArrayList<Table>();
 
     @Override
     public void afterProjectOpening() {
-        tables.clear();
-        tablesVector.removeAllElements();
-        // infoCache.clear();
+        getTables().clear();
+        getTablesVector().clear();
 
         File file = this.getFile();
         if (file.exists()) {
@@ -55,8 +54,8 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
     }
 
     public void addTable(Table table) {
-        tablesVector.add(table);
-        tables.put(table.name, table);
+        getTablesVector().add(table);
+        getTables().put(table.getName(), table);
     }
 
     public File getFile() {
@@ -78,7 +77,7 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             out.println("<tables>");
 
-            for (Table t : tablesVector) {
+            for (Table t : getTablesVector()) {
                 t.save(out);
             }
 
@@ -91,27 +90,19 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
     }
 
     public void dropTable(int index) {
-        this.dropTable(this.tablesVector.elementAt(index));
+        this.dropTable(this.getTablesVector().get(index));
     }
 
     public void dropTable(Table table) {
-        this.tables.remove(table.name);
-        this.tablesVector.remove(table);
+        this.getTables().remove(table.getName());
+        this.getTablesVector().remove(table);
     }
 
     // @table.person.name,address.1
     public Info getInfo(String id) {
-        /*Info info = this.infoCache.getVariableValue(id);
-        if (info != null) {
-        return info;
-        }*/
         Info info = null;
         try {
-            //System.out.println(id);
             String el[] = id.split("\\.");
-            /*for (String temp : el) {
-            System.out.println("    " + temp);
-            }*/
 
             String tableName = el.length > 0 ? el[0] : null;
             String columns = el.length > 1 ? el[1] : null;
@@ -119,10 +110,10 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
 
             if (tableName != null) {
                 info = new Info();
-                info.table = tables.get(tableName);
+                info.table = getTables().get(tableName);
                 if (info.table != null && columns != null) {
                     if (columns.equalsIgnoreCase("*")) {
-                        info.col = new int[info.table.columns.size()];
+                        info.col = new int[info.table.getColumns().size()];
 
                         for (int i = 0; i < info.col.length; i++) {
                             info.col[i] = i;
@@ -134,9 +125,9 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
                         for (int i = 0; i < info.col.length; i++) {
                             String colName = cols[i].trim();
                             info.col[i] = -1;
-                            for (int j = 0; j < info.table.columns.size(); j++) {
-                                TableColumn tc = info.table.columns.elementAt(j);
-                                if (tc.name.equalsIgnoreCase(colName)) {
+                            for (int j = 0; j < info.table.getColumns().size(); j++) {
+                                TableColumn tc = info.table.getColumns().get(j);
+                                if (tc.getName().equalsIgnoreCase(colName)) {
                                     info.col[i] = j;
                                     break;
                                 }
@@ -160,15 +151,12 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
                     }
                 }
 
-                //infoCache.put(id, info);
-                //System.out.println(info);
                 return info;
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        //infoCache.remove(id);
         return null;
     }
 
@@ -206,7 +194,7 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
             if (info.col != null && info.col.length > 0) {
                 StringBuffer str = new StringBuffer("");
                 int r = 0;
-                for (Vector<String> row : info.table.data) {
+                for (List<String> row : info.table.getData()) {
                     if ((info.row1 == -1 || info.row1 <= r) && (info.row2 == -1 || info.row2 >= r)) {
                         int i = 0;
                         for (int c : info.col) {
@@ -215,7 +203,7 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
                             }
                             if (c >= 0) {
                                 i++;
-                                str.append(row.elementAt(c));
+                                str.append(row.get(c));
                             }
                         }
                         str.append("\n");
@@ -241,15 +229,31 @@ public class TableVariableSpace extends AbstractPlugin implements VariableSpaceP
         return new TableDataSourcePanel(this);
     }
 
+    public Map<String, Table> getTables() {
+        return tables;
+    }
+
+    public void setTables(Map<String, Table> tables) {
+        this.tables = tables;
+    }
+
+    public List<Table> getTablesVector() {
+        return tablesVector;
+    }
+
+    public void setTablesVector(List<Table> tablesVector) {
+        this.tablesVector = tablesVector;
+    }
+
     public class Info {
 
-        public Table table;
-        public int col[] = null;
-        public int row1 = -1;
-        public int row2 = -1;
+        private Table table;
+        private int col[] = null;
+        private int row1 = -1;
+        private int row2 = -1;
 
         public String toString() {
-            String strInfo = "table: " + (table != null ? table.name : "NULL") + ", ";
+            String strInfo = "table: " + (table != null ? table.getName() : "NULL") + ", ";
             strInfo += "col={";
             if (this.col != null) {
                 for (int i = 0; i < col.length; i++) {

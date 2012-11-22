@@ -38,7 +38,7 @@ public class WidgetCheckBox extends WidgetPlugin {
     @WidgetPluginProperty(name = "caption", initValue = "Check Box", description = "A caption of the check box")
     private String caption;
     //
-    boolean bSelected = false;
+    private boolean selected = false;
 
     public WidgetCheckBox(final ActiveRegionContext region) {
         super(region);
@@ -59,38 +59,37 @@ public class WidgetCheckBox extends WidgetPlugin {
         g2.setStroke(getActiveRegionContext().getStroke());
         Color c = getActiveRegionContext().getLineColor();
         g2.setColor(c);
-        // g2.drawRect(x, y, w, h);
 
         g2.setFont(getActiveRegionContext().getFont(getActiveRegionContext().getHeight() / 2.0f));
         FontRenderContext frc = g2.getFontRenderContext();
         Font font = g2.getFont();
 
-        String strText = caption;
-        LineMetrics metrics = font.getLineMetrics(strText, frc);
+        String text = caption;
+        LineMetrics metrics = font.getLineMetrics(text, frc);
 
         FontMetrics fm = g2.getFontMetrics();
-        String original = strText;
-        float textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+        String original = text;
+        float textWidth = (float) font.getStringBounds(text, frc).getMaxX();
         while (textWidth > w && original.length() > 0) {
             original = original.substring(0, original.length() - 1);
-            strText = original + "...";
-            textWidth = (float) font.getStringBounds(strText, frc).getMaxX();
+            text = original + "...";
+            textWidth = (float) font.getStringBounds(text, frc).getMaxX();
         }
 
         g2.drawRect(x + h / 4, y + h / 4, h / 2, h / 2);
-        if (bSelected) {
+        if (selected) {
             g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 2));
             g2.drawLine(x + h / 4 + 2, y + h / 4 + 2, x + h - h / 4 - 4, y + h - h / 4 - 4);
             g2.drawLine(x + h / 4 + 2, y + h - h / 4 - 2, x + h - h / 4 - 4, y + h / 4 + 2);
             g2.setColor(c);
         }
-        g2.drawString(strText, x + h + 5, y + metrics.getHeight());
+        g2.drawString(text, x + h + 5, y + metrics.getHeight());
     }
 
     @Override
     public void mousePressed(MouseEvent me) {
-        bSelected = !bSelected;
-        this.updateSketchletVariable(updateVariable, bSelected ? selectedValue : unselectedValue);
+        selected = !selected;
+        this.updateSketchletVariable(updateVariable, selected ? selectedValue : unselectedValue);
         sendAction();
         repaint();
     }
@@ -98,7 +97,7 @@ public class WidgetCheckBox extends WidgetPlugin {
     @Override
     public void variableUpdated(String variable, String value) {
         if (updateVariable.equalsIgnoreCase(variable)) {
-            bSelected = value.equalsIgnoreCase(selectedValue);
+            selected = value.equalsIgnoreCase(selectedValue);
             repaint();
         }
     }
@@ -111,7 +110,7 @@ public class WidgetCheckBox extends WidgetPlugin {
     }
 
     private void sendAction() {
-        if (bSelected) {
+        if (selected) {
             this.getActiveRegionContext().processEvent(EVENT_SELECT);
         } else {
             this.getActiveRegionContext().processEvent(EVENT_DESELECT);

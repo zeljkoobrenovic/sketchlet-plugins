@@ -1,7 +1,7 @@
-    /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+* To change this template, choose Tools | Templates
+* and open the template in the editor.
+*/
 package net.sf.sketchlet.plugins.widgets.graphs;
 
 import net.sf.sketchlet.context.ActiveRegionContext;
@@ -11,29 +11,29 @@ import net.sf.sketchlet.plugin.WidgetPluginProperty;
 import net.sf.sketchlet.plugin.WidgetPluginTextItems;
 import net.sf.sketchlet.uml.ExternalPrograms;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.SourceStringReader;
 import net.sourceforge.plantuml.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "PlantUML", type = "widget", group="UML", position = 259)
+@PluginInfo(name = "PlantUML", type = "widget", group = "UML", position = 259)
 @WidgetPluginTextItems(initValue = "@startuml\nBob -> Alice : hello\n@enduml\n")
 @WidgetPluginLinks(links = {
-    "PlantUML Home Page; http://plantuml.sourceforge.net/"
+        "PlantUML Home Page; http://plantuml.sourceforge.net/"
 })
-public class WidgetPlantUml extends ExternalImageProgramCallerWidget {
+public class WidgetPlantUml extends ExternalImageProgramGeneratorWidget {
 
-    //
+    public static final String GRAPHVIZ_DOT_SYSTEM_VARIABLE = "GRAPHVIZ_DOT";
+    public static final String START_UML_TAG = "@startuml";
+    public static final String END_UML_TAG = "@enduml";
+
     @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size")
-    protected boolean resizeRegion = true;
+    private boolean resizeRegionEnabled = true;
 
     public WidgetPlantUml(ActiveRegionContext region) {
         super(region);
@@ -41,7 +41,6 @@ public class WidgetPlantUml extends ExternalImageProgramCallerWidget {
 
     @Override
     public void callImageGenerator() {
-        prevTime = System.currentTimeMillis();
         try {
             if (this.getActiveRegionContext() == null) {
                 return;
@@ -49,41 +48,32 @@ public class WidgetPlantUml extends ExternalImageProgramCallerWidget {
             ByteArrayOutputStream png = new ByteArrayOutputStream();
             String source = this.getActiveRegionContext().getWidgetItemText().trim();
 
-            if (!source.startsWith("@startuml")) {
-                source = "@startuml\n" + source;
+            if (!source.startsWith(START_UML_TAG)) {
+                source = START_UML_TAG + "\n" + source;
             }
 
-            if (!source.endsWith("@startuml")) {
-                source += "\n@enduml";
+            if (!source.endsWith(END_UML_TAG)) {
+                source += "\n" + END_UML_TAG;
             }
-            SourceStringReader reader = new SourceStringReader(source);
-            if (System.getenv("GRAPHVIZ_DOT") == null) {
+
+            if (System.getenv(GRAPHVIZ_DOT_SYSTEM_VARIABLE) == null) {
                 OptionFlags.getInstance().setDotExecutable(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(ExternalPrograms.getGraphVizDotPath()));
             }
-            String desc = reader.generateImage(png);
+
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(png.toByteArray()));
             this.setImage(image);
-            if (resizeRegion && image != null) {
+
+            if (resizeRegionEnabled && image != null) {
                 this.getActiveRegionContext().setProperty("width", "" + image.getWidth());
                 this.getActiveRegionContext().setProperty("height", "" + image.getHeight());
-                bScale = false;
+                setScaling(false);
             } else {
-                bScale = true;
+                setScaling(true);
             }
-            timeout = false;
+            setTimeout(false);
         } catch (Exception e) {
             e.printStackTrace();
-            timeout = true;
+            setTimeout(true);
         }
-    }
-
-    public static void main(String args[]) throws Exception {
-        OutputStream png = new ByteArrayOutputStream();
-        String source = "@startuml\n";
-        source += "Bob -> Alice : hello\n";
-        source += "@enduml\n";
-
-        SourceStringReader reader = new SourceStringReader(source);
-        String desc = reader.generateImage(png);
     }
 }

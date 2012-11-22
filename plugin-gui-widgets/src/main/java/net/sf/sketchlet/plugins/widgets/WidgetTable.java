@@ -13,59 +13,30 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Table", type="widget", group="GUI Controls")
+@PluginInfo(name = "Table", type = "widget", group = "GUI Controls")
 @WidgetPluginTextItems(initValue = "Item 1\tItem1\nItem 2\tItem2\nItem 3\tItem3")
 @WidgetPluginProperties(properties = {
-    "variable text item|table|[in/out] A variable updated",
-    "variable row|row|[in/out] A variable updated with the current  row",
-    "variable col|column|[in/out] A variable updated with the current column",
-    "visible items|all|[in/out] A number of visible items",
-    "start item|1|[in/out] First visible item"})
+        "variable text item|table|[in/out] A variable updated",
+        "variable row|row|[in/out] A variable updated with the current  row",
+        "variable col|column|[in/out] A variable updated with the current column",
+        "visible items|all|[in/out] A number of visible items",
+        "start item|1|[in/out] First visible item"})
 public class WidgetTable extends WidgetPlugin {
 
-    int selectedRow = -1;
-    int selectedColumn = -1;
+    public static final String VARIABLE_TEXT_ITEM_PROPERTY = "variable text item";
+    public static final String VISIBLE_ITEMS_PROPERTY = "visible items";
+    public static final String START_ITEM_PROPERTY = "start item";
+    private int selectedRow = -1;
+    private int selectedColumn = -1;
 
     public WidgetTable(final ActiveRegionContext region) {
         super(region);
-        String strWidgetVariable = getActiveRegionContext().getWidgetProperty("variable text item");
-        if (!strWidgetVariable.isEmpty()) {
-            this.variableUpdated(strWidgetVariable, VariablesBlackboardContext.getInstance().getVariableValue(strWidgetVariable));
+        String textVariableName = getActiveRegionContext().getWidgetProperty(VARIABLE_TEXT_ITEM_PROPERTY);
+        if (!textVariableName.isEmpty()) {
+            this.variableUpdated(textVariableName, VariablesBlackboardContext.getInstance().getVariableValue(textVariableName));
         }
-    }
-
-    public int getItemCount() {
-        String strItemCount = getActiveRegionContext().getWidgetProperty("visible items");
-
-        if (strItemCount == null || strItemCount.isEmpty() || strItemCount.equalsIgnoreCase("all")) {
-            return -1;
-        } else {
-            try {
-                return (int) Double.parseDouble(strItemCount);
-            } catch (Exception e) {
-            }
-        }
-
-        return -1;
-    }
-
-    public int getStartItemIndex() {
-        String strStart = getActiveRegionContext().getWidgetProperty("start item");
-
-        if (strStart == null || strStart.isEmpty()) {
-            return 0;
-        } else {
-            try {
-                int s = (int) Double.parseDouble(strStart) - 1;
-                return s >= 0 ? s : 0;
-            } catch (Exception e) {
-            }
-        }
-
-        return 0;
     }
 
     @Override
@@ -78,13 +49,12 @@ public class WidgetTable extends WidgetPlugin {
         g2.setStroke(getActiveRegionContext().getStroke());
         Color c = getActiveRegionContext().getLineColor();
         g2.setColor(c);
-        // g2.drawRect(x, y, w, h);
 
         FontRenderContext frc = g2.getFontRenderContext();
         Font font = g2.getFont();
 
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String rows[] = strText.split("\n");
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String rows[] = widgetItemText.split("\n");
 
         int cols = Math.max(1, this.getColumnCount(rows));
 
@@ -109,13 +79,13 @@ public class WidgetTable extends WidgetPlugin {
                     FontMetrics fm = g2.getFontMetrics();
                     String rowData[] = line.split("\t");
                     for (int ci = 0; ci < rowData.length; ci++) {
-                        String strCellText = ci < rowData.length ? rowData[ci] : "";
-                        String text = strCellText;
+                        String cellText = ci < rowData.length ? rowData[ci] : "";
+                        String text = cellText;
 
                         float textWidth = (float) font.getStringBounds(text, frc).getMaxX();
-                        while (textWidth > columnWidth && strCellText.length() > 0) {
-                            strCellText = strCellText.substring(0, strCellText.length() - 1);
-                            text = strCellText + "..";
+                        while (textWidth > columnWidth && cellText.length() > 0) {
+                            cellText = cellText.substring(0, cellText.length() - 1);
+                            text = cellText + "..";
                             textWidth = (float) font.getStringBounds(text, frc).getMaxX();
                         }
 
@@ -134,32 +104,12 @@ public class WidgetTable extends WidgetPlugin {
         }
     }
 
-    public int getColumnCount() {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String rows[] = strText.split("\n");
-
-        return this.getColumnCount(rows);
-    }
-
-    public int getColumnCount(String rows[]) {
-        int cols = 1;
-
-        for (String row : rows) {
-            int n = row.split("\t").length;
-            if (n > cols) {
-                cols = n;
-            }
-        }
-
-        return cols;
-    }
-
     @Override
     public void mousePressed(MouseEvent me) {
         int x = me.getX();
         int y = me.getY();
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String rows[] = strText.split("\n");
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String rows[] = widgetItemText.split("\n");
         int count = this.getItemCount();
         if (count == -1) {
             count = rows.length;
@@ -179,34 +129,6 @@ public class WidgetTable extends WidgetPlugin {
             updateVariables(rows, selectedRow, selectedColumn);
         }
         repaint();
-    }
-
-    public boolean hasTextItems() {
-        return true;
-    }
-
-    public void updateVariables(String[] lines, int row, int col) {
-        if (col < 0) {
-            col = 0;
-        }
-        if (row >= 0 && row < lines.length && !getActiveRegionContext().getWidgetProperty("variable text item").isEmpty()) {
-            String cells[] = lines[row].split("\t");
-            if (cells.length > col) {
-                VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable text item"), cells[col]);
-            }
-        }
-
-        if (!getActiveRegionContext().getWidgetProperty("variable row").isEmpty()) {
-            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable row"), Integer.toString(row + 1));
-        }
-        if (!getActiveRegionContext().getWidgetProperty("variable col").isEmpty()) {
-            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable col"), Integer.toString(col + 1));
-        }
-        ListUtils.executeCommandIfDefined(lines[row]);
-    }
-
-    public String getDescription() {
-        return "";
     }
 
     @Override
@@ -236,8 +158,8 @@ public class WidgetTable extends WidgetPlugin {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            String strText = getActiveRegionContext().getWidgetItemText();
-            String lines[] = strText.split("\n");
+            String widgetItemText = getActiveRegionContext().getWidgetItemText();
+            String lines[] = widgetItemText.split("\n");
             if (selectedRow < lines.length - 1) {
                 selectedRow++;
                 updateVariables(lines, selectedRow, selectedColumn);
@@ -245,12 +167,83 @@ public class WidgetTable extends WidgetPlugin {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
             if (selectedRow > 0) {
-                String strText = getActiveRegionContext().getWidgetItemText();
-                String lines[] = strText.split("\n");
+                String widgetItemText = getActiveRegionContext().getWidgetItemText();
+                String lines[] = widgetItemText.split("\n");
                 selectedRow--;
                 updateVariables(lines, selectedRow, selectedColumn);
                 repaint();
             }
         }
+    }
+
+    private int getItemCount() {
+        String visibleItemCount = getActiveRegionContext().getWidgetProperty(VISIBLE_ITEMS_PROPERTY);
+
+        if (visibleItemCount == null || visibleItemCount.isEmpty() || visibleItemCount.equalsIgnoreCase("all")) {
+            return -1;
+        } else {
+            try {
+                return (int) Double.parseDouble(visibleItemCount);
+            } catch (Exception e) {
+            }
+        }
+
+        return -1;
+    }
+
+    private int getStartItemIndex() {
+        String startItem = getActiveRegionContext().getWidgetProperty(START_ITEM_PROPERTY);
+
+        if (startItem == null || startItem.isEmpty()) {
+            return 0;
+        } else {
+            try {
+                int index = (int) Double.parseDouble(startItem) - 1;
+                return index >= 0 ? index : 0;
+            } catch (Exception e) {
+            }
+        }
+
+        return 0;
+    }
+
+    private int getColumnCount() {
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String rows[] = widgetItemText.split("\n");
+
+        return this.getColumnCount(rows);
+    }
+
+    private int getColumnCount(String rows[]) {
+        int cols = 1;
+
+        for (String row : rows) {
+            int n = row.split("\t").length;
+            if (n > cols) {
+                cols = n;
+            }
+        }
+
+        return cols;
+    }
+
+    private void updateVariables(String[] lines, int row, int col) {
+        if (col < 0) {
+            col = 0;
+        }
+        if (row >= 0 && row < lines.length && !getActiveRegionContext().getWidgetProperty(VARIABLE_TEXT_ITEM_PROPERTY).isEmpty()) {
+            String cells[] = lines[row].split("\t");
+            if (cells.length > col) {
+                VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty(VARIABLE_TEXT_ITEM_PROPERTY), cells[col]);
+            }
+        }
+
+        if (!getActiveRegionContext().getWidgetProperty("variable row").isEmpty()) {
+            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable row"), Integer.toString(row + 1));
+        }
+        if (!getActiveRegionContext().getWidgetProperty("variable col").isEmpty()) {
+            VariablesBlackboardContext.getInstance().updateVariable(getActiveRegionContext().getWidgetProperty("variable col"), Integer.toString(col + 1));
+        }
+        ListUtils.executeCommandIfDefined(lines[row]);
     }
 }

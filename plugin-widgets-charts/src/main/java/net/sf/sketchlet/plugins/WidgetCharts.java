@@ -18,19 +18,16 @@ import java.awt.*;
 import java.util.Map;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "Google Charts", type="widget", group = "Graphs")
-@WidgetPluginTextItems(initValue="cht=s\n" +
+@PluginInfo(name = "Google Charts", type = "widget", group = "Graphs")
+@WidgetPluginTextItems(initValue = "cht=s\n" +
         "chd=t:12,87,75,41,23,96,68,71,34,9|98,60,27,34,56,79,58,74,18,76|84,23,69,81,47,94,60,93,64,54\n" +
-        "chxt=x,y\n" +
-        "chxl=0:|0|20|30|40|50|60|70|80|90|10|1:|0|25|50|75|100")
-
+        "chxt=x,y\n" + "chxl=0:|0|20|30|40|50|60|70|80|90|10|1:|0|25|50|75|100")
 @WidgetPluginLinks(link = "https://developers.google.com/chart/image/docs/making_charts")
 public class WidgetCharts extends ImageCachingWidgetPlugin {
 
-    String strLastChart = "";
+    private String lastCacheKey = "";
 
     public WidgetCharts(ActiveRegionContext region) {
         super(region);
@@ -67,14 +64,13 @@ public class WidgetCharts extends ImageCachingWidgetPlugin {
             }
         }
     }
-    private String strPrevInfo = "";
 
     @Override
     public boolean isRegionChanged() {
-        String strText = getActiveRegionContext().getWidgetItemText();
-        strText = VariablesBlackboardContext.getInstance().populateTemplate(strText.trim());
-        if (!strText.equals(strPrevInfo)) {
-            strPrevInfo = strText;
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        widgetItemText = VariablesBlackboardContext.getInstance().populateTemplate(widgetItemText.trim());
+        if (!widgetItemText.equals(lastCacheKey)) {
+            lastCacheKey = widgetItemText;
             return true;
         }
         return super.isRegionChanged();

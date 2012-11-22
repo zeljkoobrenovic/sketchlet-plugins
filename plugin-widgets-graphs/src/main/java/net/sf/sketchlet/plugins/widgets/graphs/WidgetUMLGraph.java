@@ -22,51 +22,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author zobrenovic
  */
-@PluginInfo(name = "UMLGraph / Class Diagram", type = "widget", group="UML", position = 260)
+@PluginInfo(name = "UMLGraph / Class Diagram", type = "widget", group = "UML", position = 260)
 @WidgetPluginTextItems(initValue = "class PersonTest {\n    String NameTest;\n}\nclass EmployeeTest extends PersonTest {}\nclass ClientTest extends PersonTest {}")
 @WidgetPluginLinks(links = {
-    "UML Graph Documentation Page; http://www.umlgraph.org/doc.html"
+        "UML Graph Documentation Page; http://www.umlgraph.org/doc.html"
 })
-public class WidgetUMLGraph extends ExternalImageProgramCallerWidget {
+public class WidgetUMLGraph extends ExternalImageProgramGeneratorWidget {
 
-    //static String dirUmlGraph = SketchletContextUtils.getSketchletDesignerHome() + "bin/plugins/plugin-graphs/tools/umlgraph/bin/";
-    //static String cmdUmlGraph = "umlgraph.bat";
-    //
-    @WidgetPluginProperty(name = "dot parameters", initValue = "",
-    description = "Additional parameters to be sent to the dot program",
-    valueList = {"-Gratio=0.7 -Eminlen=2"})
-    protected String cmdLineParams = "";
-    //
+    @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2"})
+    private String cmdLineParams = "";
+
     @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size")
-    protected boolean resizeRegion = true;
+    private boolean resizingRegion = true;
 
     public WidgetUMLGraph(ActiveRegionContext region) {
         super(region);
     }
 
-    public static String getJavaHomeDir() {
-        String strJavaHome = System.getenv("JAVA_HOME");
-        if (strJavaHome == null || strJavaHome.trim().isEmpty() || !(new File(strJavaHome).exists())) {
-            strJavaHome = System.getProperty("java.home");
-        }
-
-        if (!strJavaHome.endsWith("/") && !strJavaHome.endsWith("\\")) {
-            strJavaHome += File.separator;
-        }
-        return strJavaHome;
-    }
-
-    protected String getUMLGraphCode() {
-        return getActiveRegionContext().getWidgetItemText();
-    }
-
     @Override
     public void callImageGenerator() {
         final String strUML = getUMLGraphCode();
-        prevTime = System.currentTimeMillis();
         File srcFile = null;
         File dotFile = null;
         File imgFile = null;
@@ -92,7 +69,7 @@ public class WidgetUMLGraph extends ExternalImageProgramCallerWidget {
             dotParams.add(ExternalPrograms.getGraphVizDotPath());
             dotParams.add("-Tpng");
 
-            String params[] = cmdLineParams.split(" ");
+            String params[] = getCmdLineParams().split(" ");
             for (String param : params) {
                 dotParams.add(param);
             }
@@ -109,21 +86,21 @@ public class WidgetUMLGraph extends ExternalImageProgramCallerWidget {
             if (imgFile.exists()) {
                 BufferedImage image = ImageIO.read(imgFile);
                 this.setImage(image);
-                if (resizeRegion && image != null) {
+                if (isResizingRegion() && image != null) {
                     this.getActiveRegionContext().setProperty("width", "" + image.getWidth());
                     this.getActiveRegionContext().setProperty("height", "" + image.getHeight());
-                    bScale = false;
+                    setScaling(false);
                 } else {
-                    bScale = true;
+                    setScaling(true);
                 }
-                timeout = false;
+                setTimeout(false);
             } else {
                 SketchletPluginLogger.error("Could not generate UML Graph image.");
-                timeout = true;
+                setTimeout(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            timeout = true;
+            setTimeout(true);
         } finally {
             if (srcFile != null) {
                 srcFile.delete();
@@ -135,5 +112,25 @@ public class WidgetUMLGraph extends ExternalImageProgramCallerWidget {
                 imgFile.delete();
             }
         }
+    }
+
+    protected String getUMLGraphCode() {
+        return getActiveRegionContext().getWidgetItemText();
+    }
+
+    public String getCmdLineParams() {
+        return cmdLineParams;
+    }
+
+    public void setCmdLineParams(String cmdLineParams) {
+        this.cmdLineParams = cmdLineParams;
+    }
+
+    public boolean isResizingRegion() {
+        return resizingRegion;
+    }
+
+    public void setResizingRegion(boolean resizingRegion) {
+        this.resizingRegion = resizingRegion;
     }
 }

@@ -13,30 +13,21 @@ import java.awt.font.FontRenderContext;
  * @author zobrenovic
  */
 public class WidgetHorizontalList extends WidgetPlugin {
-
-    int selectedIndex = -1;
-    boolean bRadio = false;
     public final static String UPDATE_EVENT = "selection changed";
 
-    public WidgetHorizontalList(final ActiveRegionContext region, boolean bRadio) {
+    private int selectedIndex = -1;
+    private boolean radio = false;
+    private FontRenderContext frc;
+    private Font font;
+    private boolean processing = false;
+
+    public WidgetHorizontalList(final ActiveRegionContext region, boolean radio) {
         super(region);
-        this.bRadio = bRadio;
-        String strControlVariable = getActiveRegionContext().getWidgetProperty("item text variable");
-        if (!strControlVariable.isEmpty()) {
-            this.variableUpdated(strControlVariable, VariablesBlackboardContext.getInstance().getVariableValue(strControlVariable));
+        this.radio = radio;
+        String controlVariable = getActiveRegionContext().getWidgetProperty("item text variable");
+        if (!controlVariable.isEmpty()) {
+            this.variableUpdated(controlVariable, VariablesBlackboardContext.getInstance().getVariableValue(controlVariable));
         }
-    }
-
-    public String getDefaultItemsText() {
-        return "Item 1\nItem 2\nItem 3";
-    }
-
-    public String[][] getPropertiesDefaults() {
-        String prefix = bRadio ? "radiolist" : "list";
-        return new String[][]{
-                {"item text variable", prefix + "_item", "[in/out] A variable updated with a text of a selected item"},
-                {"item position variable", prefix + "_pos", "[in/out] A variable updated with a position of a selected item"}
-        };
     }
 
     @Override
@@ -48,14 +39,12 @@ public class WidgetHorizontalList extends WidgetPlugin {
 
         g2.setStroke(getActiveRegionContext().getStroke());
         Color c = getActiveRegionContext().getLineColor();
-        Color cTxt = getActiveRegionContext().getTextColor();
         g2.setColor(c);
-        // g2.drawRect(x, y, w, h);
 
         frc = g2.getFontRenderContext();
 
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String items[] = strText.split("\n");
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String items[] = widgetItemText.split("\n");
         try {
             if (items.length > 0) {
                 int lineh = h;
@@ -68,7 +57,7 @@ public class WidgetHorizontalList extends WidgetPlugin {
                     float textWidth = (float) font.getStringBounds(line, frc).getMaxX();
 
                     if (this.selectedIndex == i) {
-                        if (!bRadio) {
+                        if (!radio) {
                             g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 5));
                             g2.fillRect(x, y, (int) textWidth, lineh);
                             g2.setColor(c);
@@ -79,7 +68,7 @@ public class WidgetHorizontalList extends WidgetPlugin {
                         }
                     }
 
-                    if (!bRadio) {
+                    if (!radio) {
                         //g2.setColor(cTxt);
                         g2.drawString(line, x, (int) (y + lineh - fm.getDescent() / 2));
                         x += textWidth;
@@ -96,17 +85,13 @@ public class WidgetHorizontalList extends WidgetPlugin {
         }
     }
 
-    FontRenderContext frc;
-    Font font;
-    boolean bProcessing = false;
-
     @Override
     public void mousePressed(MouseEvent me) {
         int x = me.getX();
         int y = me.getY();
-        bProcessing = true;
-        String strText = getActiveRegionContext().getWidgetItemText();
-        String items[] = strText.split("\n");
+        processing = true;
+        String widgetItemText = getActiveRegionContext().getWidgetItemText();
+        String items[] = widgetItemText.split("\n");
 
         if (frc != null && items.length > 0) {
             int _x = 0;
@@ -116,7 +101,7 @@ public class WidgetHorizontalList extends WidgetPlugin {
             for (int i = 0; i < items.length; i++) {
                 String line = " " + ListUtils.getLineText(items[i]) + " ";
                 int textWidth = (int) font.getStringBounds(line, frc).getMaxX();
-                if (bRadio) {
+                if (radio) {
                     textWidth += lineh;
                 }
                 if (x >= _x && x <= _x + textWidth) {
@@ -130,10 +115,10 @@ public class WidgetHorizontalList extends WidgetPlugin {
             updateVariables(items, selectedIndex);
         }
         repaint();
-        bProcessing = false;
+        processing = false;
     }
 
-    public void updateVariables(String lines[], int pos) {
+    private void updateVariables(String lines[], int pos) {
         boolean changed = false;
         String itemText = "";
         if (pos >= 0 && pos < lines.length && !this.getActiveRegionContext().getWidgetProperty("item text variable").isEmpty()) {
@@ -152,25 +137,14 @@ public class WidgetHorizontalList extends WidgetPlugin {
         }
     }
 
-    public boolean hasTextItems() {
-        return true;
-    }
-
-    public String getDescription() {
-        return "";
-    }
-
     @Override
-    public void mouseReleased(MouseEvent me) {
-    }
-
     public void variableUpdated(String triggerVariable, String value) {
-        if (bProcessing) {
+        if (processing) {
             return;
         }
         if (getActiveRegionContext().getWidgetProperty("item text variable").equalsIgnoreCase(triggerVariable)) {
-            String strText = getActiveRegionContext().getWidgetItemText();
-            String lines[] = strText.split("\n");
+            String widgetItemText = getActiveRegionContext().getWidgetItemText();
+            String lines[] = widgetItemText.split("\n");
             this.selectedIndex = -1;
             for (int i = 0; i < lines.length; i++) {
                 if (lines[i].trim().equalsIgnoreCase(value.trim())) {
@@ -188,10 +162,11 @@ public class WidgetHorizontalList extends WidgetPlugin {
         }
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            String strText = getActiveRegionContext().getWidgetItemText();
-            String lines[] = strText.split("\n");
+            String widgetItemText = getActiveRegionContext().getWidgetItemText();
+            String lines[] = widgetItemText.split("\n");
 
             if (selectedIndex < lines.length - 1) {
                 selectedIndex++;
@@ -200,15 +175,12 @@ public class WidgetHorizontalList extends WidgetPlugin {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
             if (selectedIndex > 0) {
-                String strText = getActiveRegionContext().getWidgetItemText();
-                String lines[] = strText.split("\n");
+                String widgetItemText = getActiveRegionContext().getWidgetItemText();
+                String lines[] = widgetItemText.split("\n");
                 selectedIndex--;
                 updateVariables(lines, selectedIndex);
                 repaint();
             }
         }
-    }
-
-    public void keyReleased(KeyEvent e) {
     }
 }

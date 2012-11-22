@@ -15,29 +15,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
  * @author zobrenovic
  */
-public class ExternalImageProgramCallerWidget extends WidgetPlugin {
+public class ExternalImageProgramGeneratorWidget extends WidgetPlugin {
 
-    String strOldSignature = "";
+    private String oldCacheKey = "";
     private BufferedImage image;
-    boolean creating = false;
-    boolean waiting = false;
-    boolean timeout = false;
-    long prevTime = 0;
+    private boolean creating = false;
+    private boolean waiting = false;
+    private boolean timeout = false;
     private Object lock = new Object();
     private CountDownLatch create = null;
-    ExecutorService executor = Executors.newCachedThreadPool();
-    protected boolean bScale = false;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    private boolean scaling = false;
+    private long lastNanoTime = 0;
+    private boolean processing = false;
 
-    public ExternalImageProgramCallerWidget(ActiveRegionContext region) {
+    public ExternalImageProgramGeneratorWidget(ActiveRegionContext region) {
         super(region);
     }
 
     protected void callImageGenerator() {
     }
-    long lastTime = 0;
 
     public void setImage(BufferedImage image) {
         this.image = image;
@@ -47,13 +46,16 @@ public class ExternalImageProgramCallerWidget extends WidgetPlugin {
         return this.image;
     }
 
+    /**
+     * Calls external program and generates image.
+     */
     protected void createImage() {
         if (!SketchletContext.getInstance().isInBatchMode()) {
             synchronized (lock) {
                 if (waiting) {
                     return;
                 }
-                if (creating || System.nanoTime() - lastTime < 1000000000) {
+                if (creating || System.nanoTime() - lastNanoTime < 1000000000) {
                     waiting = true;
                 } else {
                     creating = true;
@@ -84,7 +86,7 @@ public class ExternalImageProgramCallerWidget extends WidgetPlugin {
                 executor.execute(new Runnable() {
 
                     public void run() {
-                        if (inProcess) {
+                        if (isProcessing()) {
                             return;
                         }
                         if (create != null) {
@@ -94,56 +96,59 @@ public class ExternalImageProgramCallerWidget extends WidgetPlugin {
                         }
                         create = new CountDownLatch(1);
                         try {
-                            inProcess = true;
+                            setProcessing(true);
                             callImageGenerator();
                         } finally {
-                            lastTime = System.nanoTime();
+                            lastNanoTime = System.nanoTime();
                             creating = false;
                             create.countDown();
-                            inProcess = false;
+                            setProcessing(false);
                             SketchletContext.getInstance().repaint();
                         }
                     }
                 });
             } else {
                 callImageGenerator();
-                lastTime = System.nanoTime();
+                lastNanoTime = System.nanoTime();
                 creating = false;
-                inProcess = false;
-                timeout = false;
+                setProcessing(false);
+                setTimeout(false);
             }
         }
         if (!SketchletContext.getInstance().isInBatchMode()) {
             SketchletContext.getInstance().repaint();
         }
     }
-    private boolean inProcess = false;
 
+    /**
+     * Returns the widget items text.
+     *
+     * @return  the widget items text.
+     */
     protected String getText() {
         return getActiveRegionContext().getWidgetItemText();
     }
 
     @Override
     public void paint(Graphics2D g2) {
-        //long time = System.currentTimeMillis();
-        String strText = getText();
-        if (strText.isEmpty()) {
+        String text = getText();
+        if (text.isEmpty()) {
             return;
         }
-        if (strText.length() > 0) {
+        if (text.length() > 0) {
             int x1 = 0;
             int y1 = 0;
 
-            if (image == null || !strOldSignature.equals(this.getSignature())) {
+            if (image == null || !oldCacheKey.equals(this.getCacheKey())) {
                 createImage();
-                strOldSignature = this.getSignature();
+                oldCacheKey = this.getCacheKey();
             }
 
-            if (timeout) {
+            if (isTimeout()) {
                 g2.drawString("Timeout.", x1 + 5, y1 + 15);
             } else {
                 if (image != null) {
-                    if (!bScale) {
+                    if (!isScaling()) {
                         g2.drawImage(image, x1, y1, null);
                     } else {
                         g2.drawImage(image, x1, y1, getActiveRegionContext().getWidth(), getActiveRegionContext().getHeight(), null, null);
@@ -164,14 +169,44 @@ public class ExternalImageProgramCallerWidget extends WidgetPlugin {
         }
     }
 
-    protected String getSignature() {
+    /**
+     * Return the cache key for generated image. If cache key was not changed from
+     * previous call, image is returned from cache, and external program is not called.
+     *
+     * @return  the cache key for image generator
+     */
+    protected String getCacheKey() {
         ActiveRegionContext r = getActiveRegionContext();
         if (r.isAdjusting()) {
-            return this.strOldSignature;
+            return this.oldCacheKey;
         } else {
             String strProperties = r.getWidgetPropertiesString(true);
             String strText = r.getWidgetItemText();
             return strProperties + ";" + strText + ";" + r.getWidth() + ";" + r.getHeight();
         }
+    }
+
+    public boolean isScaling() {
+        return scaling;
+    }
+
+    public void setScaling(boolean scaling) {
+        this.scaling = scaling;
+    }
+
+    public boolean isProcessing() {
+        return processing;
+    }
+
+    public void setProcessing(boolean processing) {
+        this.processing = processing;
+    }
+
+    public boolean isTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(boolean timeout) {
+        this.timeout = timeout;
     }
 }

@@ -4,35 +4,32 @@
  */
 package net.sf.sketchlet.plugins.varspaces.table.ui;
 
-import net.sf.sketchlet.common.file.FileUtils;
 import net.sf.sketchlet.common.translation.Language;
-import net.sf.sketchlet.util.UtilContext;
 import net.sf.sketchlet.plugins.varspaces.table.Table;
 import net.sf.sketchlet.plugins.varspaces.table.TableColumn;
 import net.sf.sketchlet.plugins.varspaces.table.TableVariableSpace;
+import net.sf.sketchlet.util.UtilContext;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
- *
  * @author zobrenovic
  */
 public class TableDataSourcePanel extends JPanel {
 
-    JTabbedPane tabs = new JTabbedPane();
-    Vector<TablePanel> tablePanels = new Vector<TablePanel>();
-    TableVariableSpace tableDataSource;
-    JButton addBtn = new JButton(Language.translate("add table"), UtilContext.getInstance().getImageIconFromResources("resources/add2.gif"));
-    JButton deleteBtn = new JButton(Language.translate("delete"), UtilContext.getInstance().getImageIconFromResources("resources/remove.gif"));
-    JButton columnsBtn = new JButton(Language.translate("columns..."), UtilContext.getInstance().getImageIconFromResources("resources/columns.png"));
-    JButton renameBtn = new JButton(Language.translate("rename..."), UtilContext.getInstance().getImageIconFromResources("resources/text-field.gif"));
-    JButton expressionsBtn = new JButton(Language.translate("expressions"));
-    final TableDataSourcePanel thisPanel = this;
+    private JTabbedPane tabs = new JTabbedPane();
+    private java.util.List<TablePanel> tablePanels = new ArrayList<TablePanel>();
+    private TableVariableSpace tableDataSource;
+    private JButton addBtn = new JButton(Language.translate("add table"), UtilContext.getInstance().getImageIconFromResources("resources/add2.gif"));
+    private JButton deleteBtn = new JButton(Language.translate("delete"), UtilContext.getInstance().getImageIconFromResources("resources/remove.gif"));
+    private JButton columnsBtn = new JButton(Language.translate("columns..."), UtilContext.getInstance().getImageIconFromResources("resources/columns.png"));
+    private JButton renameBtn = new JButton(Language.translate("rename..."), UtilContext.getInstance().getImageIconFromResources("resources/text-field.gif"));
+    private JButton expressionsBtn = new JButton(Language.translate("expressions"));
+    private final TableDataSourcePanel thisPanel = this;
 
     public TableDataSourcePanel(TableVariableSpace dataSource) {
         this.setLayout(new BorderLayout());
@@ -59,23 +56,24 @@ public class TableDataSourcePanel extends JPanel {
                             continue;
                         }
                         Table t = new Table();
-                        t.name = name;
+                        t.setName(name);
                         TableColumn tc = t.addNewColumn();
-                        tc.name = "Column1";
+                        tc.setName("Column1");
                         tableDataSource.addTable(t);
                         load();
                         break;
                     } else {
                         break;
                     }
-                };
+                }
+                ;
             }
         });
 
         deleteBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                int n = tabs.getSelectedIndex();
+                int n = getTabs().getSelectedIndex();
 
                 if (n >= 0) {
                     try {
@@ -87,8 +85,8 @@ public class TableDataSourcePanel extends JPanel {
 
                         if (opt == JOptionPane.YES_OPTION) {
                             tableDataSource.dropTable(n);
-                            tabs.remove(n);
-                            tablePanels.remove(n);
+                            getTabs().remove(n);
+                            getTablePanels().remove(n);
                         }
                     } catch (Exception e) {
                     }
@@ -99,11 +97,11 @@ public class TableDataSourcePanel extends JPanel {
         columnsBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                int n = tabs.getSelectedIndex();
+                int n = getTabs().getSelectedIndex();
 
                 if (n >= 0) {
                     try {
-                        ColumnsDialog dlg = new ColumnsDialog(thisPanel, tableDataSource.tablesVector.elementAt(n));
+                        ColumnsDialog dlg = new ColumnsDialog(thisPanel, tableDataSource.getTablesVector().get(n));
                         dlg.setVisible(true);
                     } catch (Exception e) {
                     }
@@ -114,127 +112,94 @@ public class TableDataSourcePanel extends JPanel {
         renameBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                int n = tabs.getSelectedIndex();
+                int n = getTabs().getSelectedIndex();
 
                 if (n >= 0) {
                     try {
-                        Table t = tableDataSource.tablesVector.elementAt(n);
+                        Table t = tableDataSource.getTablesVector().get(n);
 
                         while (true) {
-                            String name = JOptionPane.showInputDialog(thisPanel, Language.translate("Table name:"), t.name);
+                            String name = JOptionPane.showInputDialog(thisPanel, Language.translate("Table name:"), t.getName());
                             if (name != null) {
                                 if (nameExists(name, t)) {
                                     JOptionPane.showMessageDialog(thisPanel, "Another table with the name '" + name + "' already exists.\nYou have to enter unique name.");
                                     continue;
                                 }
-                                t.name = name;
-                                tabs.setTitleAt(n, name);
+                                t.setName(name);
+                                getTabs().setTitleAt(n, name);
                                 break;
                             } else {
                                 break;
                             }
-                        };
+                        }
+                        ;
                     } catch (Exception e) {
                     }
                 }
             }
         });
+
         expressionsBtn.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                int n = tabs.getSelectedIndex();
+                int n = getTabs().getSelectedIndex();
 
                 if (n >= 0) {
-                    Table t = tableDataSource.tablesVector.elementAt(n);
+                    Table t = tableDataSource.getTablesVector().get(n);
                     JOptionPane.showMessageDialog(TableDataSourcePanel.this, new JTextArea(t.getExpressionExamples()));
 
                 }
             }
         });
+
         add(toolbar, BorderLayout.NORTH);
         load();
 
-        add(tabs);
+        add(getTabs());
     }
 
-    public void load() {
-        tabs.removeAll();
-        tablePanels.removeAllElements();
+    private void load() {
+        getTabs().removeAll();
+        getTablePanels().clear();
 
-        for (Table table : tableDataSource.tablesVector) {
+        for (Table table : tableDataSource.getTablesVector()) {
             TablePanel tablePanel = new TablePanel(table);
-            this.tabs.addTab(table.name, tablePanel);
-            this.tablePanels.add(tablePanel);
+            this.getTabs().addTab(table.getName(), tablePanel);
+            this.getTablePanels().add(tablePanel);
         }
     }
 
-    public static void main(String args[]) {
-        File dir = new File("c:\\temp\\tables");
-        FileUtils.deleteDir(dir);
-        Table t = new Table();
-        t.name = "person";
-        t.columns.add(new TableColumn("name\tString\tJohn"));
-        t.columns.add(new TableColumn("address\tString\tUtrecht"));
-
-        t.add("Jacobine\tAmsterdam");
-        t.add("Zeljko\tAmsterdam");
-        t.add("Jacobine\tAmsterdam");
-        t.add("Zeljko\tAmsterdam");
-        t.add("Jacobine\tAmsterdam");
-        t.add("Zeljko\tAmsterdam");
-
-        //t.onSave(dir);
-        t.name += "_2";
-        //t.onSave(dir);
-        t.name += "_3";
-        //t.onSave(dir);
-        t.name += "_4";
-        //t.onSave(dir);
-
-        TableVariableSpace tds = new TableVariableSpace();
-        tds.afterProjectOpening();
-
-        System.out.println(tds.evaluate("table.person"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.name"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.name,address"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address,address"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address,name"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address,name.1"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address,name.2"));
-        System.out.println();
-        System.out.println(tds.evaluate("table.person.address,name.1-2"));
-
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.add(new TableDataSourcePanel(tds));
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    public boolean nameExists(String name) {
-        for (Table t : this.tableDataSource.tablesVector) {
-            if (t.name.equalsIgnoreCase(name)) {
+    private boolean nameExists(String name) {
+        for (Table t : this.tableDataSource.getTablesVector()) {
+            if (t.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean nameExists(String name, Table skipTable) {
-        for (Table t : this.tableDataSource.tables.values()) {
-            if (t != skipTable && t.name.equalsIgnoreCase(name)) {
+    private boolean nameExists(String name, Table skipTable) {
+        for (Table t : this.tableDataSource.getTables().values()) {
+            if (t != skipTable && t.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public JTabbedPane getTabs() {
+        return tabs;
+    }
+
+    public void setTabs(JTabbedPane tabs) {
+        this.tabs = tabs;
+    }
+
+    public java.util.List<TablePanel> getTablePanels() {
+        return tablePanels;
+    }
+
+    public void setTablePanels(java.util.List<TablePanel> tablePanels) {
+        this.tablePanels = tablePanels;
     }
 }
