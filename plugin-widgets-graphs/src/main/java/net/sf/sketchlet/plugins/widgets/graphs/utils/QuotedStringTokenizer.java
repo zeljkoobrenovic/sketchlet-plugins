@@ -1,11 +1,3 @@
-/*
- * QuotedStringTokenizer.java
- *
- * Created on March 26, 2008, 2:23 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
 package net.sf.sketchlet.plugins.widgets.graphs.utils;
 
 /*

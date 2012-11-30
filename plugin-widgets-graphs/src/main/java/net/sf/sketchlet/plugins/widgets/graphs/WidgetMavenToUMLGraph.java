@@ -1,14 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.sketchlet.plugins.widgets.graphs;
 
 import net.sf.sketchlet.context.ActiveRegionContext;
-import net.sf.sketchlet.plugin.PluginInfo;
-import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
-import net.sf.sketchlet.plugin.WidgetPluginTextItems;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -24,11 +17,13 @@ import java.util.Map;
 /**
  * @author zobrenovic
  */
+/*
 @PluginInfo(name = "UMLGraph / Maven POM", type = "widget", group = "UML", position = 286)
 @WidgetPluginTextItems(initValue = "")
 @WidgetPluginLinks(links = {
         "Maven POM Reference; http://maven.apache.org/pom.html"
 })
+*/
 public class WidgetMavenToUMLGraph extends WidgetUMLGraph {
     private String code = "";
 

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.sketchlet.plugins.widgets;
 
 import net.sf.sketchlet.context.ActiveRegionContext;
@@ -9,6 +5,7 @@ import net.sf.sketchlet.plugin.PluginInfo;
 import net.sf.sketchlet.plugin.WidgetPlugin;
 import net.sf.sketchlet.plugin.WidgetPluginEvents;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,6 +19,7 @@ import java.awt.font.LineMetrics;
 @PluginInfo(name = "Button", type = "widget", group = "GUI Controls")
 @WidgetPluginEvents(events = {WidgetButton.EVENT_CLICK, WidgetButton.EVENT_PRESS, WidgetButton.EVENT_RELEASE})
 public class WidgetButton extends WidgetPlugin {
+    private static Logger log = Logger.getLogger(WidgetButton.class);
 
     public final static String EVENT_CLICK = "click";
     public final static String EVENT_PRESS = "press";
@@ -60,6 +58,7 @@ public class WidgetButton extends WidgetPlugin {
             g2.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() / 5));
             g2.fillRect(x, y, w, h);
         }
+
         g2.setColor(c);
         g2.drawRect(x, y, w, h);
 
@@ -79,9 +78,9 @@ public class WidgetButton extends WidgetPlugin {
             textWidth = (float) font.getStringBounds(text, frc).getMaxX();
         }
 
+        log.info(text);
+
         g2.drawString(text, x + w / 2 - textWidth / 2, y + metrics.getHeight());
-
-
     }
 
     @Override

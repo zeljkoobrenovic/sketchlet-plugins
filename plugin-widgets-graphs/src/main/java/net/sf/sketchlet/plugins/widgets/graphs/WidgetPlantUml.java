@@ -1,7 +1,3 @@
-/*
-* To change this template, choose Tools | Templates
-* and open the template in the editor.
-*/
 package net.sf.sketchlet.plugins.widgets.graphs;
 
 import net.sf.sketchlet.context.ActiveRegionContext;
@@ -37,6 +33,12 @@ public class WidgetPlantUml extends ExternalImageProgramGeneratorWidget {
     @WidgetPluginProperty(name = "resize region", initValue = "true", description = "Resize the region to fit the generated image size")
     private boolean resizeRegion = true;
 
+    @WidgetPluginProperty(name = "monochrome", initValue = "true", valueList = {"true", "false"}, description = "Draw images in blac and white theme")
+    private boolean monochrome = true;
+
+    @WidgetPluginProperty(name = "default font", initValue = "Tahoma", description = "Default font for all nodes")
+    private String defaultFont = "Tahoma";
+
     public WidgetPlantUml(ActiveRegionContext region) {
         super(region);
     }
@@ -57,6 +59,16 @@ public class WidgetPlantUml extends ExternalImageProgramGeneratorWidget {
             if (!source.endsWith(END_UML_TAG)) {
                 source += "\n" + END_UML_TAG;
             }
+
+            int indexOfNewLineCharacter = source.indexOf("\n");
+            if (indexOfNewLineCharacter > 0) {
+                source = source.substring(0, indexOfNewLineCharacter)
+                        + "\nskinparam monochrome " + monochrome
+                        + "\nskinparam defaultFontName \"" + defaultFont + "\""
+                        + "\n"
+                        + source.substring(indexOfNewLineCharacter);
+            }
+
             SourceStringReader reader = new SourceStringReader(source);
             if (System.getenv(GRAPHVIZ_DOT_SYSTEM_VARIABLE) == null) {
                 OptionFlags.getInstance().setDotExecutable(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(ExternalPrograms.getGraphVizDotPath()));

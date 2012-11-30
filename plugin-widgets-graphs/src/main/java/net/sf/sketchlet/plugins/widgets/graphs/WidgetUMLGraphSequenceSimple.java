@@ -1,16 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.sketchlet.plugins.widgets.graphs;
 
 import net.sf.sketchlet.common.context.SketchletContextUtils;
 import net.sf.sketchlet.common.file.FileUtils;
 import net.sf.sketchlet.context.ActiveRegionContext;
-import net.sf.sketchlet.plugin.PluginInfo;
-import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
-import net.sf.sketchlet.plugin.WidgetPluginTextItems;
 import net.sf.sketchlet.plugins.widgets.graphs.utils.DestroyThread;
 import net.sf.sketchlet.uml.ExternalPrograms;
 
@@ -24,6 +17,7 @@ import java.util.Random;
 /**
  * @author zobrenovic
  */
+/*
 @PluginInfo(name = "UMLGraph / Sequence Diagram / Simple DSL", type = "widget", group = "UML", position = 270)
 @WidgetPluginTextItems(initValue = "S,\"s:Switch\"" + "\n"
         + "P,\"p:Pump\"" + "\n"
@@ -38,6 +32,7 @@ import java.util.Random;
 @WidgetPluginLinks(links = {
         "DSL for UMLGraph Sequence Diagram; http://macroexpand.org/doku.php?id=articles:uml-sequence-diagram-dsl-txl:start"
 })
+*/
 public class WidgetUMLGraphSequenceSimple extends WidgetPic2Plot {
 
     @WidgetPluginProperty(name = "scale", initValue = "1.34", description = "Internal image scaling")

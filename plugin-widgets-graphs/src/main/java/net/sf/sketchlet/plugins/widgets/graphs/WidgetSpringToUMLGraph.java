@@ -1,14 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.sketchlet.plugins.widgets.graphs;
 
 import net.sf.sketchlet.context.ActiveRegionContext;
-import net.sf.sketchlet.plugin.PluginInfo;
-import net.sf.sketchlet.plugin.WidgetPluginLinks;
 import net.sf.sketchlet.plugin.WidgetPluginProperty;
-import net.sf.sketchlet.plugin.WidgetPluginTextItems;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -24,11 +17,11 @@ import java.util.Map;
 /**
  * @author zobrenovic
  */
-@PluginInfo(name = "UMLGraph / Spring Configuration", type = "widget", group = "UML", position = 285)
+/*@PluginInfo(name = "UMLGraph / Spring Configuration", type = "widget", group = "UML", position = 285)
 @WidgetPluginTextItems(initValue = "")
 @WidgetPluginLinks(links = {
         "Spring Reference; http://static.springsource.org/spring/docs/2.5.x/reference/xsd-config.html"
-})
+})*/
 public class WidgetSpringToUMLGraph extends WidgetUMLGraph {
 
     @WidgetPluginProperty(name = "dot parameters", initValue = "", description = "Additional parameters to be sent to the dot program", valueList = {"-Gratio=0.7 -Eminlen=2"})
